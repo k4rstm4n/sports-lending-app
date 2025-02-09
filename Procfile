@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn a17cla.wgsi
+web: gunicorn a17cla.wsgi
