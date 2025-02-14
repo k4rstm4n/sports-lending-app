@@ -21,4 +21,6 @@ urlpatterns = [
     # path('', include('myapp.urls')),
     # path('myapp/', include('myapp.urls')),
     path('admin/', admin.site.urls),
+    path("login/", include("login.urls")),
+    path("templates/", include("templates.urls")),
 ]
