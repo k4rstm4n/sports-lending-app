@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div>
+    <h1>Login</h1>
+</div>
+{% load socialaccount %}
+<h2>Google Login</h2>
+<form action="{% provider_login_url 'google' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">SIGN IN WITH GOOGLE</button>
+</form>
+
+{% if user.is_authenticated %}
+<p>You are signed in as {{user.email}}</p>
+<a href="/login/logout">Logout</a>
+{% endif %}
+{% endblock content %}
