@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'login/login.css' %}">
+{% endblock %}
+
 {% block content %}
 <div>
-    <h1>Login</h1>
+    <h1>Ready to start borrowing and lending with us? <i class="bi bi-dribbble"></i></h1>
 </div>
 {% load socialaccount %}
-<h2>Google Login</h2>
+<h2>Sign up or login with Google to get started!</h2>
 <form action="{% provider_login_url 'google' %}" method="post">
     {% csrf_token %}
-    <button type="submit">SIGN IN WITH GOOGLE</button>
+    <button type="submit">Sign up or login <i class="bi bi-google"></i></i></button>
 </form>
 
 {% if user.is_authenticated %}
