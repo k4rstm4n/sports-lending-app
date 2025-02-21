@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class AddressField(models.Model):
@@ -8,8 +9,7 @@ class AddressField(models.Model):
     state = models.CharField(max_length=5)
     zip_code = models.CharField(max_length=5)
 class Profile(models.Model):
-    username = models.CharField(max_length=32)
-    passward = models.CharField(max_length=32)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     birth_date = models.DateField()
     address = AddressField()
 
