@@ -7,23 +7,21 @@
 
 {% block content %}
 <div>
+{% if not user.is_authenticated %}
     <h1>Ready to start borrowing and lending with us? <i class="bi bi-dribbble"></i></h1>
+    <h2>Sign up or login with Google to get started!</h2>
+{% else %}
+    <h1>Need to switch your account?</h1>
+    <h2>Currently logged in as {{user.email}}</h2>
+{% endif %}
 </div>
+
 {% load socialaccount %}
-<h2>Sign up or login with Google to get started!</h2>
 <form action="{% provider_login_url 'google' %}" method="post">
     {% csrf_token %}
     <button type="submit">Sign up or login <i class="bi bi-google"></i></i></button>
 </form>
 
-{% if user.is_authenticated %}
-    {% if perms.login.lender_perms %}
-    <p>Lender home</p>
-    {% elif perms.login.borrower_perms %}
-    <p>Borrower Home</p>
-    {% endif %}
-<p>You are signed in as {{user.email}}</p>
 <a href="/login/logout">Logout</a>
 
-{% endif %}
 {% endblock content %}
