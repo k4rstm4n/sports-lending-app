@@ -1,6 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
 from django.contrib.auth import logout
+from django.shortcuts import redirect, render
+from django.views import generic
+from .models import Profile
 
 # Create your views here.
 
@@ -15,4 +17,13 @@ def logout_view(request):
 
 
 def profile(request):
-    return HttpResponse("Hello, world. This is the profile")
+    profile = Profile
+
+    if request.method == 'POST':
+        profile.fname = request.POST.get('fname')
+        profile.lname = request.POST.get('lname')
+        profile.birth_date = request.POST.get('birth_date')
+        profile.save()
+        ##return redirect() redirect to main page?
+
+    return render(request, 'profile.html', {'profile': profile})
