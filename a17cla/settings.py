@@ -108,16 +108,16 @@ WSGI_APPLICATION = "a17cla.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    },
-    "deployed": dj_database_url.config(
+    "defaults": dj_database_url.config(
         conn_max_age=600,
         conn_health_checks=True,
         ssl_require=True,
     )
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": BASE_DIR / "db.sqlite3",
+    # },
+    
 }
 
 
@@ -176,6 +176,6 @@ try:
         import django_heroku
 
         django_heroku.settings(locals())
-        DATABASES['default'] = DATABASES['deployed']
+        # DATABASES['default'] = DATABASES['deployed']
 except ImportError:
     found = False
