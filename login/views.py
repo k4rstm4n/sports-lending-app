@@ -26,4 +26,4 @@ def profile(request):
         profile.save()
         ##return redirect() redirect to main page?
 
-    return render(request, 'profile.html', {'profile': profile})
+    return render(request, 'login/profile.html', {'login/profile': profile})
