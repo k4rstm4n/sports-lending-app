@@ -6,21 +6,62 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <!--{% for product in products % -> dynamically create a card in the row}  -->
-        <div class="card">
-            <!-- IMG CODE -->
-            <img src="{% static 'products/images/placeholder-image.jpg' %}" class="card-img-top" alt="image">
+<div class="container">
+    <h1 class="mb-4">Sports Equipment Catalog</h1>
 
-            <div class="card-body">
-                <h5 class="card-title">Product Name</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed in debitis consequatur
-                    consequuntur voluptates animi dolores, vel accusamus qui saepe quasi nobis asperiores laudantium
-                    dicta eligendi quidem officiis alias voluptate.</p>
-                <a href="#">View Details</a>
-            </div>
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-12">
+                    {{ form.search }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Category</label>
+                    {{ form.category }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Condition</label>
+                    {{ form.condition }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Min Price</label>
+                    {{ form.min_price }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Max Price</label>
+                    {{ form.max_price }}
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="{% url 'products:product_catalog' %}" class="btn btn-secondary">Clear Filters</a>
+                </div>
+            </form>
         </div>
     </div>
+
+    <!-- Equipment List -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for equipment in equipment_list %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ equipment.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ equipment.brand }}</h6>
+                    <p class="card-text">{{ equipment.description }}</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Category:</strong> {{ equipment.get_category_display }}</li>
+                        <li><strong>Condition:</strong> {{ equipment.get_condition_display }}</li>
+                        <li><strong>Price per day:</strong> ${{ equipment.price_per_day }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center">No equipment found matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
 </div>
-{% endblock content %}
+{% endblock %}
