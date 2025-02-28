@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'products/catalog.css' %}">
+{% endblock %}
+
+{% block content %}
+<div>
+    <p>{{ equipment.name }}</p>
+    <p>{{ equipment.brand }}</p>
+    <p>{{ equipment.description }}</p>
+    <p>{{ equipment.get_category_display }}</p>
+    <p>{{ equipment.get_condition_display }}</p>
+    <p>{{ equipment.price_per_day }}</p>
+</div>
+
+
+{% endblock content %}

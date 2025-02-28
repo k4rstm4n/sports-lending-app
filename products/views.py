@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Q
 from .models import Equipment
 from .forms import EquipmentFilterForm
+from django.views import generic
 
 
 # Create your views here.
@@ -36,4 +37,12 @@ def product_catalog(request):
             'equipment_list': queryset
         }
         return render(request, 'products/catalog.html', context)
+    
+
+class ProductDetailView(generic.DetailView):
+    model = Equipment
+    template_name = "products/detail.html"
+
+    def get_queryset(self):
+        return Equipment.objects.all()
 
