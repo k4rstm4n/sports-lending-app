@@ -31,3 +31,11 @@ class Equipment(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Review(models.Model):
+    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name="reviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text= models.TextField()
+    rating = models.PositiveSmallIntegerField(choices=[(i, str(i)) for i in range(1,6)])
+    created_at = models.DateTimeField(auto_now_add=True)

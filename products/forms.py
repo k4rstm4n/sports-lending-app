@@ -1,5 +1,5 @@
 from django import forms
-from .models import Equipment
+from .models import Equipment, Review
 
 class EquipmentFilterForm(forms.Form):
     search = forms.CharField(required = False, widget = forms.TextInput(attrs={
@@ -34,3 +34,13 @@ class EquipmentFilterForm(forms.Form):
             'placeholder': 'Max price'
         })
     )
+
+class ReviewForm(forms.ModelForm):
+
+    class Meta:
+        model = Review
+        fields = ["text", "rating"]
+        widgets = {
+            "text": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Write your review..."}),
+            "rating": forms.Select(attrs={"class": "form-control"}, choices=[(i, str(i)) for i in range(1, 6)]),
+        }
