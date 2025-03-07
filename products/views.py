@@ -3,6 +3,12 @@ from django.db.models import Q
 from .models import Equipment
 from .forms import EquipmentFilterForm
 from django.views import generic
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+from django.utils import timezone
+
+from .models import Review
+from .forms import ReviewForm
 
 
 # Create your views here.
@@ -45,4 +51,34 @@ class ProductDetailView(generic.DetailView):
 
     def get_queryset(self):
         return Equipment.objects.all()
+    
+    def get_context_data(self, **kwargs):
+        context=  super().get_context_data(**kwargs)
+        context["reviews"] = self.object.reviews.all() #fetch related reviews
+        return context
+
+
+class ReviewCreate(CreateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = "products/review_form.html"
+    success_url = reverse_lazy("products:product_catalog")
+
+    
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data["equipment"] = Equipment.objects.get(pk=self.kwargs["pk"])  # Pass equipment to template
+        return data
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user  # Assign user
+        self.object.equipment = Equipment.objects.get(pk=self.kwargs["pk"])  # Assign equipment
+        self.object.created_at = timezone.now()
+        self.object.save()
+        return super().form_valid(form)
+
+
+    
+
 
