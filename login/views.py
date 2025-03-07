@@ -33,10 +33,10 @@ def profile(request):
         profile.fname = request.POST.get('fname')
         profile.lname = request.POST.get('lname')
         profile.birth_date = request.POST.get('birth_date')
-        profile.address.address = request.POST.get('address')
-        profile.address.city = request.POST.get('city')
-        profile.address.state = request.POST.get('state')
-        profile.address.zip_code = request.POST.get('zip_code')
+        profile.address = request.POST.get('address')
+        profile.city = request.POST.get('city')
+        profile.state = request.POST.get('state')
+        profile.zip_code = request.POST.get('zip_code')
         profile.save()
         ##return redirect() redirect to main page?
 
