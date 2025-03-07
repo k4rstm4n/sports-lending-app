@@ -86,7 +86,6 @@ SOCIALACCOUNT_PROVIDERS = {
 # STATIC_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/static/'
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -195,6 +194,7 @@ AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 AWS_STORAGE_BUCKET_NAME = 'a17cla-bucket'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_QUERYSTRING_AUTH = False
+
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",

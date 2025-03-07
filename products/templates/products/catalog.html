@@ -49,6 +49,9 @@
                     <h5 class="card-title">{{ equipment.name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{ equipment.brand }}</h6>
                     <p class="card-text">{{ equipment.description }}</p>
+                    {% if equipment.image %}
+                    <img src="{{equipment.image.url}}" class="card-img-top">
+                    {% endif %}
                     <ul class="list-unstyled">
                         <li><strong>Category:</strong> {{ equipment.get_category_display }}</li>
                         <li><strong>Condition:</strong> {{ equipment.get_condition_display }}</li>
