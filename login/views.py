@@ -3,7 +3,7 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect, render
 from django.views import generic
 from .models import Profile
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 
 # Create your views here.
 
@@ -28,8 +28,6 @@ def profile(request):
         profile = Profile.objects.get(user=request.user)
     except Profile.DoesNotExist:
         profile = Profile(user=request.user)
-    is_librarian = profile.user.groups.filter(name='Librarian').exists()
-    print(str(profile.user) + " " + str(is_librarian))
     if request.method == 'POST':
         if 'main_submit' in request.POST:
             profile.fname = request.POST.get('fname')
@@ -41,14 +39,13 @@ def profile(request):
             profile.zip_code = request.POST.get('zip_code')
             profile.save()
             ##return redirect() redirect to main page?
-        elif 'uid_submit' in request.POST:
-            uid = request.POST.get('uid')
-            other_user = Profile.objects.get(id=uid).user
+        elif 'email_submit' in request.POST:
+            input_email = request.POST.get('email')
+            other_user = User.objects.get(email=input_email.lower())
             
             if other_user is not None:
-                patron_group = Group.objects.get(name='Patron')
-                librarian_group = Group.objects.get(name='Librarian')
-                other_user.groups.add(librarian_group)
-                other_user.groups.remove(patron_group)
+                other_user.user_permissions.add(Permission.objects.get(name='Global lender permissions'))
+                other_user.user_permissions.remove(Permission.objects.get(name='Global borrower permissions'))
 
-    return render(request, 'login/profile.html', {'profile': profile, 'is_librarian':is_librarian})
+
+    return render(request, 'login/profile.html', {'profile': profile})
