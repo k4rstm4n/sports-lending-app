@@ -19,6 +19,7 @@ class Profile(models.Model):
     lname = models.CharField(default=None, max_length=64)
     birth_date = models.DateField()
     address = AddressField()
+    image = models.FileField(upload_to="media/")
 
 
 class CustomPerms(models.Model):

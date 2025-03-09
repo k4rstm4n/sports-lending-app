@@ -7,7 +7,10 @@
 
 {% block content %}
 <div style=max-width:fit-content;margin-left:auto;margin-right:auto;>
-    <form method="post">
+    {% if profile.image %}
+    <img src="{{profile.image.url}}" class="card-img-top">
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}      
         <label>First name:</label>
@@ -25,6 +28,8 @@
         <input type="text" id="state" name="state" value="{{ profile.address.state }}"><br><br>
         <label>ZIP Code:</label>
         <input type="text" id="zip_code" name="zip_code" value="{{ profile.address.zip_code }}"><br><br>
+        <label>Image:</label>
+        <input type="file" id="image" name="image" value="{{ profile.image }}"><br><br>
         <input style=max-width:fit-content;margin-left:auto type="submit" value="Save">
     </form>
 </div>

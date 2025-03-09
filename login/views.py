@@ -37,6 +37,7 @@ def profile(request):
         profile.address.city = request.POST.get('city')
         profile.address.state = request.POST.get('state')
         profile.address.zip_code = request.POST.get('zip_code')
+        profile.image = request.FILES.get('image')
         profile.save()
         ##return redirect() redirect to main page?
 
