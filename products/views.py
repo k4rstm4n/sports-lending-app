@@ -1,14 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
-from .models import Equipment
-from .forms import EquipmentFilterForm
-from django.views import generic
+from .models import Equipment, Review
+from .forms import *
 from django.views.generic.edit import CreateView
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
+from django.views import generic
 from django.utils import timezone
-
-from .models import Review
-from .forms import ReviewForm
 
 
 # Create your views here.
@@ -43,7 +40,6 @@ def product_catalog(request):
             'equipment_list': queryset
         }
         return render(request, 'products/catalog.html', context)
-    
 
 class ProductDetailView(generic.DetailView):
     model = Equipment
@@ -78,7 +74,17 @@ class ReviewCreate(CreateView):
         self.object.save()
         return super().form_valid(form)
 
-
     
 
 
+class EquipmentCreateView(CreateView):
+    model = Equipment
+    fields = ["name", "description", "price_per_day", "condition", "category", "brand", "image"]
+
+    
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.owner = self.request.user
+        self.object.created_at = timezone.now()
+        self.object.save()
+        return redirect(reverse("products:product_catalog"))

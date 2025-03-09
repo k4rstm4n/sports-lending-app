@@ -28,6 +28,7 @@ class Equipment(models.Model):
     is_available = models.BooleanField(default=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.FileField(upload_to="media/")
 
     def __str__(self):
         return self.name
