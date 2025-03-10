@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "login",
     "products",
     "django_bootstrap5",
+    "storages",
 ]
 
 
@@ -70,6 +71,21 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {"access_type": "online"},
     }
 }
+
+
+
+# AWS_S3_REGION_NAME = 'us-east-1'
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# # For serving static files directly from S3
+# AWS_S3_URL_PROTOCOL = 'https'
+# AWS_S3_USE_SSL = True
+# AWS_S3_VERIFY = True
+
+# # Static and media file configuration
+# STATIC_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -107,17 +123,33 @@ WSGI_APPLICATION = "a17cla.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    # "default": dj_database_url.config(
-    #     conn_max_age=600,
-    #     conn_health_checks=True,
-    #     ssl_require=True,
-    # )
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    },
-}
+# DATABASES = {
+#     "deployed": dj_database_url.config(
+#         conn_max_age=600,
+#         conn_health_checks=True,
+#         ssl_require=True,
+#     ),
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     },
+# }
+
+if os.getenv('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        ),
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -170,11 +202,26 @@ AUTHENTICATION_BACKENDS = {
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+AWS_STORAGE_BUCKET_NAME = 'a17cla-bucket'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_QUERYSTRING_AUTH = False
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 try:
     if "HEROKU" in os.environ:
         import django_heroku
-
         django_heroku.settings(locals())
-        # DATABASES['default'] = DATABASES['deployed']
 except ImportError:
     found = False

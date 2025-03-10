@@ -7,22 +7,29 @@
 
 {% block content %}
 <div style=max-width:fit-content;margin-left:auto;margin-right:auto;>
-    <form>
+    {% if profile.image %}
+    <img src="{{profile.image.url}}" class="card-img-top">
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}      
         <label>First name:</label>
-        <input type="text" name="fname" value="{{profile.fname}}"><br><br>
+        <input type="text" id="fname" name="fname" value="{{profile.fname}}"><br><br>
         <label>Last name:</label>
-        <input type="text" name="lname" value="{{profile.lname}}"><br><br>
+        <input type="text" id="lname" name="lname" value="{{profile.lname}}"><br><br>
         <label>Birth Date:</label>
-        <input type="date" name="birth_date" value="{{ profile.birth_date|date:'Y-m-d' }}"><br><br>
+        <input type="date" id="birth_date" name="birth_date" value="{{ profile.birth_date|date:'Y-m-d' }}"><br><br>
         <h3>Address</h3>
         <label>Street Address:</label>
-        <input type="text" name="address" value="{{ profile.address.address }}"><br><br>
+        <input type="text" id="addresss" name="address" value="{{ profile.address.address }}"><br><br>
         <label>City:</label>
-        <input type="text" name="city" value="{{ profile.address.city }}"><br><br>
+        <input type="text" id="city" name="city" value="{{ profile.address.city }}"><br><br>
         <label>State:</label>
-        <input type="text" name="state" value="{{ profile.address.state }}"><br><br>
+        <input type="text" id="state" name="state" value="{{ profile.address.state }}"><br><br>
         <label>ZIP Code:</label>
-        <input type="text" name="zip_code" value="{{ profile.address.zip_code }}"><br><br>
+        <input type="text" id="zip_code" name="zip_code" value="{{ profile.address.zip_code }}"><br><br>
+        <label>Image:</label>
+        <input type="file" id="image" name="image" value="{{ profile.image }}"><br><br>
         <input style=max-width:fit-content;margin-left:auto type="submit" value="Save">
     </form>
 </div>

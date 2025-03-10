@@ -13,3 +13,5 @@ cryptography
 dj-database-url
 whitenoise
 psycopg2
+django-storages
+boto3
