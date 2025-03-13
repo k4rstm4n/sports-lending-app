@@ -73,7 +73,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
-
 # AWS_S3_REGION_NAME = 'us-east-1'
 # AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
@@ -135,9 +134,9 @@ WSGI_APPLICATION = "a17cla.wsgi.application"
 #     },
 # }
 
-if os.getenv('DATABASE_URL'):
+if os.getenv("DATABASE_URL"):
     DATABASES = {
-        'default': dj_database_url.config(
+        "default": dj_database_url.config(
             conn_max_age=600,
             conn_health_checks=True,
             ssl_require=True,
@@ -145,9 +144,9 @@ if os.getenv('DATABASE_URL'):
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
@@ -207,8 +206,8 @@ LOGOUT_REDIRECT_URL = "/"
 
 AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
-AWS_STORAGE_BUCKET_NAME = 'a17cla-bucket'
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_STORAGE_BUCKET_NAME = "a17cla-bucket"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 AWS_QUERYSTRING_AUTH = False
 
 STORAGES = {
@@ -222,6 +221,7 @@ STORAGES = {
 try:
     if "HEROKU" in os.environ:
         import django_heroku
+
         django_heroku.settings(locals())
 except ImportError:
     found = False
