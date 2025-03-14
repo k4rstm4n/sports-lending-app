@@ -1,11 +1,6 @@
-from django.test import TestCase, Client
-from django.urls import reverse
+from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import Profile, AddressField, CustomPerms
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.contrib import admin
-from . import admin as login_admin
-from .apps import LoginConfig
+from .models import Profile, CustomPerms
 
 
 class ProfileModelTest(TestCase):
