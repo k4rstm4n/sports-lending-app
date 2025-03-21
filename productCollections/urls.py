@@ -10,5 +10,5 @@ urlpatterns = [
         views.MakeCollectionsCreateView.as_view(),
         name="make_collections",
     ),
-    # path("make_collections/", views.make_collections, name="make_collections"),
+    path("view_collections/", views.collection_catalog, name="view_collections"),
 ]

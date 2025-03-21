@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Sports Equipment Catalog</h1>
+
+    <!-- Equipment List -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for collections in collection_list %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ collections.collection_name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ collections.collection_description }}</h6>
+                    <p class="card-text">{{ collections.collection_creator }}</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Category:</strong> {{ collections.collection_private_userlist }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center">No equipment found matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
