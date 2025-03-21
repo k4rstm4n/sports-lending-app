@@ -70,6 +70,11 @@
                         <a class="nav-link" href="{% url 'products:create_equipment' %}">Add Equipment</a>
                     </li>
                     {% endif %}
+                    {% if perms.login.lender_perms or perms.login.borrower_perms %}
+                    <li>
+                        <a class="nav-link" href="{% url 'productCollections:make_collections' %}">Make Collections</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
