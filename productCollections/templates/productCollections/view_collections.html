@@ -2,9 +2,8 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="mb-4">Sports Equipment Catalog</h1>
+    <h1 class="mb-4">need to finish this next sprint</h1>
 
-    <!-- Equipment List -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for collections in collection_list %}
         <div class="col">
@@ -13,6 +12,7 @@
                     <h5 class="card-title">{{ collections.collection_name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{ collections.collection_description }}</h6>
                     <p class="card-text">{{ collections.collection_creator }}</p>
+                    <p class="card-text">{{ collections.collection_privacy }}</p>
                     <ul class="list-unstyled">
                         <li><strong>Category:</strong> {{ collections.collection_private_userlist }}</li>
                     </ul>

@@ -8,7 +8,7 @@ from django.views import generic
 from django.utils import timezone
 
 
-# this is for debugging purposes- will probably have to be redone slightly
+# this is for debugging purposes- will probably have to be redone slightly (just this collection_catalog for viewing)
 def collection_catalog(request):
     # form = EquipmentFilterForm(request.GET)
     queryset = Collection.objects.filter()
@@ -47,7 +47,7 @@ class MakeCollectionsCreateView(CreateView):
         "collection_name",
         "collection_description",
         "collection_privacy",
-        "collection_creator",
+        # "collection_creator",
         "collection_private_userlist",
         # "created_at",
     ]
