@@ -8,6 +8,7 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.models import User, Permission
 from login.models import Profile
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # this is for debugging purposes- will probably have to be redone slightly next sprint (just this collection_catalog for viewing)
@@ -19,7 +20,7 @@ def collection_catalog(request):
     return render(request, "productCollections/view_collections.html", context)
 
 
-class MakeCollectionsCreateView(CreateView):
+class MakeCollectionsCreateView(LoginRequiredMixin, CreateView):
     model = Collection
     fields = [
         "collection_name",
@@ -27,6 +28,9 @@ class MakeCollectionsCreateView(CreateView):
         "collection_privacy",
         "collection_private_userlist",
     ]
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
