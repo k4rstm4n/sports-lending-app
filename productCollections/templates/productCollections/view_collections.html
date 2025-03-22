@@ -11,17 +11,23 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ collections.collection_name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{ collections.collection_description }}</h6>
-                    <p class="card-text">{{ collections.collection_creator }}</p>
+                    <!-- <p class="card-text">{{ collections.collection_creator }}</p> -->
                     <p class="card-text">{{ collections.collection_privacy }}</p>
                     <ul class="list-unstyled">
-                        <li><strong>Category:</strong> {{ collections.collection_private_userlist }}</li>
+                        <li><strong>the private user list:</strong>
+                            {% for user in collections.collection_private_userlist.all %}
+                            {{ user.email }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                            (None)
+                            {% endfor %}
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-12">
-            <p class="text-center">No equipment found matching your criteria.</p>
+            <p class="text-center">No collections found matching your criteria.</p>
         </div>
         {% endfor %}
     </div>
