@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ collections.collection_name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{ collections.collection_description }}</h6>
-                    <!-- <p class="card-text">{{ collections.collection_creator }}</p> -->
+                    <p class="card-text">Created by: {{ collections.owner.username }}</p>
                     <p class="card-text">{{ collections.collection_privacy }}</p>
                     <ul class="list-unstyled">
                         <li><strong>the private user list:</strong>

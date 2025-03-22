@@ -45,7 +45,9 @@ class MakeCollectionsCreateView(CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        # print(f"User: {self.request.user}")
         self.object.owner = self.request.user
+        # print(f"Object Owner: {self.object.owner}")
         self.object.created_at = timezone.now()
 
         self.object.save()

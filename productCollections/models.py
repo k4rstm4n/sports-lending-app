@@ -19,6 +19,9 @@ class Collection(models.Model):
     )
 
     collection_private_userlist = models.ManyToManyField(User, blank=True)
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="collections", default=""
+    )
 
     def __str__(self):
         return self.collection_name
