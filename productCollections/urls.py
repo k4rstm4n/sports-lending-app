@@ -11,4 +11,5 @@ urlpatterns = [
         name="make_collections",
     ),
     path("view_collections/", views.collection_catalog, name="view_collections"),
+    path("my_collections/", views.my_collections, name='my_collections'),
 ]

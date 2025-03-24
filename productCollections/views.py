@@ -59,3 +59,26 @@ class MakeCollectionsCreateView(LoginRequiredMixin, CreateView):
             form.save_m2m()
 
         return redirect(reverse("productCollections:make_collections"))
+
+def my_collections(request):
+    form = CollectionFilterForm(request.GET)
+
+    if request.user.has_perm('login.lender_perms'):
+        queryset = Collection.objects.get_queryset()
+    elif request.user.has_perm('login.borrower_perms'):
+        queryset = Collection.objects.filter(owner = request.user)
+
+
+    if form.is_valid():
+        if form.cleaned_data['search']:
+            search_query = form.cleaned_data['search']
+            queryset = queryset.filter(
+                Q(collection_name__icontains=search_query) |
+                Q(collection_description__icontains=search_query)
+            )
+
+        context = {
+            'form': form,
+            'collection_list': queryset
+        }
+        return render(request, 'productCollections/catalog.html', context)
