@@ -35,9 +35,11 @@
                                 <p class="text-muted">{{ review.created_at }}</p>
                                 <p>{{ review.text }}</p>
 
-                                <a href="{% url 'products:product_review_update' equipment.id %}" class="btn btn-outline-secondary">
-                                    <i class=""></i> Edit
-                                </a>
+                                {% if review.user == request.user %}
+                                    <a href="{% url 'products:product_review_update' equipment.id %}" class="btn btn-outline-secondary">
+                                        <i class=""></i> Edit
+                                    </a>
+                                {% endif %}
 
                             </div>
                         {% endfor %}
