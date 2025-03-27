@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+
+import uuid
+
 class Equipment(models.Model):
     CONDITION_CHOICES = [
         ('new', 'New'),
@@ -23,6 +26,7 @@ class Equipment(models.Model):
         ('available', 'Available'),
         ('unavailable', 'unavailable'),
     ]
+    
 
     name = models.CharField(max_length=100)
     description = models.TextField()
