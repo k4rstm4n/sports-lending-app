@@ -12,7 +12,7 @@ from django.utils import timezone
 
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
-    queryset = Equipment.objects.filter(is_available=True)
+    queryset = Equipment.objects.filter(status='available')
 
     if form.is_valid():
         if form.cleaned_data['search']:
