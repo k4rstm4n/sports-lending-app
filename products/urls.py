@@ -12,6 +12,7 @@ urlpatterns = [
     #products/1/details/
     path("<int:pk>/details/", views.ProductDetailView.as_view(), name='product_detail'),
     path("<int:pk>/reviews/", views.ReviewCreate.as_view(), name="product_review"),
+    path("<int:pk>/reviews/edit", views.ReviewUpdate.as_view(), name="product_review_update"),
 
 
 

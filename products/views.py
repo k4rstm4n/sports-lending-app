@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import Equipment, Review
 from .forms import *
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 
 # Create your views here.
@@ -74,6 +75,27 @@ class ReviewCreate(CreateView):
         self.object.save()
         return super().form_valid(form)
 
+class ReviewUpdate(UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = "products/review_form.html"
+    success_url = reverse_lazy("products:product_catalog")
+
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data["equipment"] = Equipment.objects.get(pk=self.kwargs["pk"])  # Pass equipment to template
+        return data
+    
+    def get_object(self, queryset=None):
+        #retrieve URL based on primary key and check if review belongs to user
+        return get_object_or_404(Review, pk=self.kwargs["pk"], user=self.request.user)
+    
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.created_at = timezone.now()
+        self.object.save()
+        return super().form_valid(form)
     
 
 

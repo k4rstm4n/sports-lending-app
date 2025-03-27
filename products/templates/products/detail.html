@@ -34,6 +34,11 @@
                                 <h5 class="fw-bold">{{ review.user.username }}</h5>
                                 <p class="text-muted">{{ review.created_at }}</p>
                                 <p>{{ review.text }}</p>
+
+                                <a href="{% url 'products:product_review_update' equipment.id %}" class="btn btn-outline-secondary">
+                                    <i class=""></i> Edit
+                                </a>
+
                             </div>
                         {% endfor %}
                     {% else %}
