@@ -8,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.models import User
 
 
 # Create your views here.
@@ -43,8 +44,8 @@ def product_catalog(request):
         }
         return render(request, 'products/catalog.html', context)
     
-def my_products(request):
-    user = request.user
+def my_products(request, pk):
+    user = get_object_or_404(User, pk=pk)
     equipment_list = Equipment.objects.filter(owner=user)
     context = {
         'equipment_list': equipment_list
