@@ -58,6 +58,19 @@
                             <i class="bi bi-arrow-right"></i> Post a Review
                         </a>
                     </div>
+
+
+                    {% if user.groups.all.0.name == "Borrowers" %}
+                        <a href="#" class="btn btn-outline-secondary">
+                            <i class=""></i>Rent
+                        </a>
+                    {% endif %}
+
+                    {% if user.groups.all.0.name == "Lenders" %}
+                        <a href="#" class="btn btn-outline-secondary">
+                            <i class=""></i>View Requests
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
