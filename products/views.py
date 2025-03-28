@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 
 
 # Create your views here.
@@ -110,3 +110,21 @@ class EquipmentCreateView(CreateView):
         self.object.created_at = timezone.now()
         self.object.save()
         return redirect(reverse("products:product_catalog"))
+    
+def rent_equipment(request, equipment_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    equipment = get_object_or_404(Equipment, id=equipment_id)
+
+    if equipment.status != 'available':
+        return render(request, 'products/rental_failure.html', {'error': 'Equipment is unavailable'})
+    
+    equipment.status = 'unavailable'
+    equipment.save()
+
+
+    return render(request, 'products/rental_success.html', {'equipment': equipment})
+
+
+

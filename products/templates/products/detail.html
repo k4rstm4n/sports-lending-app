@@ -61,7 +61,7 @@
 
 
                     {% if user.groups.all.0.name == "Borrowers" %}
-                        <a href="#" class="btn btn-outline-secondary">
+                        <a href="{% url 'products:product_rent' equipment.id %}" class="btn btn-outline-secondary">
                             <i class=""></i>Rent
                         </a>
                     {% endif %}
