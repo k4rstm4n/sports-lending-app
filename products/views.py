@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .models import Equipment, Review
+from .models import Equipment, Review, Rental
 from .forms import *
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse, reverse_lazy
@@ -130,6 +130,9 @@ def rent_equipment(request, equipment_id):
     
     equipment.status = 'unavailable'
     equipment.save()
+
+    #create rental record
+    Rental.objects.create(user=request.user, equipment=equipment)
 
 
     return render(request, 'products/rental_success.html', {'equipment': equipment})

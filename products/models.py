@@ -42,6 +42,13 @@ class Equipment(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Rental(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+    rental_date = models.TimeField(auto_now_add=True)
+    return_date = models.DateField(null=True, blank=True)
+    active = models.BooleanField(default=True)
 
 
 class Review(models.Model):
