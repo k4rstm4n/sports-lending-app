@@ -41,6 +41,14 @@ def product_catalog(request):
             'equipment_list': queryset
         }
         return render(request, 'products/catalog.html', context)
+    
+def my_products(request):
+    user = request.user
+    equipment_list = Equipment.objects.filter(owner=user)
+    context = {
+        'equipment_list': equipment_list
+    }
+    return render(request, 'products/my_equipment.html', context)
 
 class ProductDetailView(generic.DetailView):
     model = Equipment
