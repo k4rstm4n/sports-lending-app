@@ -21,6 +21,7 @@
                         <li><strong>Condition:</strong> {{ equipment.get_condition_display }}</li>
                         <li><strong>Price per day:</strong> ${{ equipment.price_per_day }}</li>
                     </ul>
+                    <a href="{% url 'products:product_requests' equipment.id %}">View Requests</a>
                 </div>
             </div>
 

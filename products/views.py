@@ -3,6 +3,7 @@ from django.db.models import Q
 from .models import Equipment, Review, Rental
 from .forms import *
 from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic import DetailView
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
@@ -119,6 +120,8 @@ class EquipmentCreateView(CreateView):
         self.object.save()
         return redirect(reverse("products:product_catalog"))
     
+
+    
 def rent_equipment(request, equipment_id):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -137,5 +140,15 @@ def rent_equipment(request, equipment_id):
 
     return render(request, 'products/rental_success.html', {'equipment': equipment})
 
+class RequestsView(DetailView):
+    model = Equipment
+    template_name = "products/requests.html"
+    pk_url_kwarg = "equipment_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        equipment = self.get_object()
+        context["rental_requests"] = Rental.objects.filter(equipment=equipment)
+        return context
 
 
