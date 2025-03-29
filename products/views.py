@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .models import Equipment, Review
 from .forms import *
@@ -6,6 +6,8 @@ from django.views.generic.edit import CreateView
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
+from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.contrib import messages
 
 
 # Create your views here.

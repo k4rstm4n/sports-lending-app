@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 class Collection(models.Model):
 
     collection_name = models.CharField(max_length=100)
@@ -18,10 +17,18 @@ class Collection(models.Model):
         max_length=20, choices=LENDER_PRIVACY_CHOICES, default="public"
     )
 
-    collection_private_userlist = models.ManyToManyField(User, blank=True)
+    collection_private_userlist = models.ManyToManyField(User, blank=True, related_name="productCollections_private_userlist")
     owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="collections", default=""
+        User, on_delete=models.CASCADE, related_name="productCollections_owned_collections"
     )
 
     def __str__(self):
         return self.collection_name
+
+class Equipment(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+
+    collections = models.ManyToManyField(Collection, blank=True, related_name="equipments")
+    def __str__(self):
+        return self.name
