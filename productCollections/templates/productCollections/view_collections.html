@@ -2,10 +2,34 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="mb-4">need to finish this next sprint</h1>
+    <h1 class="mb-4">Available Collections</h1>
+
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-12">
+                    {{ form.search }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Privacy</label>
+                    {{ form.collection_privacy }}
+                </div>
+
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="{% url 'productCollections:view_collections' %}" class="btn btn-secondary">Clear
+                        Filters</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for collections in collection_list %}
+        <!-- {% if perms.login.borrower_perms%} -->
         <div class="col">
             <div class="card h-100">
                 <div class="card-body">
@@ -25,6 +49,7 @@
                 </div>
             </div>
         </div>
+        <!-- {% endif %} -->
         {% empty %}
         <div class="col-12">
             <p class="text-center">No collections found matching your criteria.</p>
