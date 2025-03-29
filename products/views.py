@@ -10,9 +10,6 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import messages
 
 
-# Create your views here.
-
-
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
     queryset = Equipment.objects.filter(is_available=True)

@@ -18,6 +18,13 @@ class EditCollectionForm(forms.ModelForm):
             "collection_private_userlist",
         ]
 
+        search = forms.CharField(
+            required=False,
+            widget=forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Search equipment..."}
+            ),
+        )
+
 
 class CollectionFilterForm(forms.Form):
     search = forms.CharField(
