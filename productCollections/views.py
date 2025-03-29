@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.contrib import messages
-from .models import Collection, Equipment
+from .models import Collection
 from .forms import CollectionFilterForm, EditCollectionForm
 from .forms import *
 from django.views.generic.edit import CreateView
@@ -69,17 +69,17 @@ def edit_collection(request, collection_id):
     else:
         form = EditCollectionForm(instance=collection)
 
-    products = Equipment.objects.all()
-    collection_products = Equipment.objects.all()
     search_query = request.GET.get("search", "")
-    print("All Products:", products)  # Debugging output
-    print("Collection Products:", collection_products)  # Debugging output
-    print("Search Query:", search_query)  # Debugging output
-
+    # products = Equipment.objects.none()
+    collection_products = Equipment.objects.filter(collections=collection)
+    products = collection_products
     if search_query:
-        products = Equipment.objects.all()  # REMOVE FILTER for testing
-        # products = products.filter(name__icontains=search_query)
-        print("Filtered Products:", products)  # Debugging output
+        products = Equipment.objects.filter(
+            Q(name__icontains=search_query)
+            | Q(description__icontains=search_query)
+            | Q(brand__icontains=search_query)
+        )
+
     context = {
         "form": form,
         "collection": collection,
