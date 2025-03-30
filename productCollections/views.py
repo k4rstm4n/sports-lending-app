@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.contrib import messages
 from .models import Collection
+from .forms import CollectionFilterForm, EditCollectionForm
 from .forms import *
 from django.views.generic.edit import CreateView
 from django.urls import reverse, reverse_lazy
@@ -8,7 +10,84 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.models import User, Permission
 from login.models import Profile
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from products.models import Equipment
+
+
+@login_required
+def edit_collection(request, collection_id):
+    collection = get_object_or_404(Collection, id=collection_id)
+
+    if request.method == "POST":
+
+        if "update_collection" in request.POST:
+            form = EditCollectionForm(request.POST, instance=collection)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Collection updated successfully.")
+                return redirect(
+                    "productCollections:edit_collection", collection_id=collection.id
+                )
+            else:
+                messages.error(request, "Please correct the errors below.")
+
+        elif "delete_collection" in request.POST:
+            collection.delete()
+            messages.success(request, "Collection deleted successfully.")
+            return redirect("productCollections:my_collections")
+
+        elif "add_product" in request.POST:
+            product_id = request.POST.get("product_id")
+            product = get_object_or_404(Equipment, id=product_id)
+
+            private_collections = product.collections.filter(
+                collection_privacy="private"
+            )
+            if private_collections.exists() and collection not in private_collections:
+                messages.error(
+                    request,
+                    "This product is already in a private collection and cannot be added to another collection.",
+                )
+                return redirect(
+                    "productCollections:edit_collection", collection_id=collection.id
+                )
+            product.collections.add(collection)
+            messages.success(request, "Product added successfully.")
+            return redirect(
+                "productCollections:edit_collection", collection_id=collection.id
+            )
+
+        elif "remove_product" in request.POST:
+            product_id = request.POST.get("product_id")
+            product = get_object_or_404(Equipment, id=product_id)
+            product.collections.remove(collection)
+            messages.success(request, "Product removed successfully.")
+            return redirect(
+                "productCollections:edit_collection", collection_id=collection.id
+            )
+    else:
+        form = EditCollectionForm(instance=collection)
+
+    search_query = request.GET.get("search", "")
+    # products = Equipment.objects.none()
+    collection_products = Equipment.objects.filter(collections=collection)
+    products = collection_products
+    if search_query:
+        products = Equipment.objects.filter(
+            Q(name__icontains=search_query)
+            | Q(description__icontains=search_query)
+            | Q(brand__icontains=search_query)
+        )
+
+    context = {
+        "form": form,
+        "collection": collection,
+        "products": products,
+        "collection_products": collection_products,
+        "search_query": search_query,
+    }
+    return render(request, "productCollections/edit_collection.html", context)
 
 
 def collection_catalog(request):

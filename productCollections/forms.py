@@ -8,6 +8,24 @@ from .models import Collection
 #         fields = ["collection_name", "collection_description", "collection_privacy"]
 
 
+class EditCollectionForm(forms.ModelForm):
+    class Meta:
+        model = Collection
+        fields = [
+            "collection_name",
+            "collection_description",
+            "collection_privacy",
+            "collection_private_userlist",
+        ]
+
+        search = forms.CharField(
+            required=False,
+            widget=forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Search equipment..."}
+            ),
+        )
+
+
 class CollectionFilterForm(forms.Form):
     search = forms.CharField(
         required=False,
