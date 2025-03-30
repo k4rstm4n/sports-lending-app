@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .models import Equipment, Review
 from .forms import *
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
@@ -55,6 +55,17 @@ class ProductDetailView(generic.DetailView):
         context["reviews"] = self.object.reviews.all()  # fetch related reviews
         return context
 
+    def edit_product(request, pk):
+        product = Equipment.objects.get(pk=pk)
+        if request.method == "POST":
+            pass
+    def delete_product(request, pk):
+        product = Equipment.objects.get(pk=pk)
+        #print("delete button")
+        if request.method == "POST":
+            product.delete()
+            return redirect('/products')
+
 
 class ReviewCreate(CreateView):
     model = Review
@@ -78,7 +89,22 @@ class ReviewCreate(CreateView):
         self.object.created_at = timezone.now()
         self.object.save()
         return super().form_valid(form)
+class EquipmentUpdateView(UpdateView):
+    model = Equipment
+    fields = [
+        "name",
+        "description",
+        "price_per_day",
+        "condition",
+        "category",
+        "brand",
+        "image",
+    ]
+    template_name = "products/equipment_form.html"
 
+    def get_success_url(self):
+        # After successful update, redirect to product detail page
+        return reverse_lazy("products:product_detail", kwargs={"pk": self.object.pk})
 
 class EquipmentCreateView(CreateView):
     model = Equipment
