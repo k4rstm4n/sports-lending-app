@@ -77,6 +77,8 @@
                     <li>
                         <a class="nav-link" href="{% url 'productCollections:my_collections' %}">My Collections</a>
                     </li>
+                    {% endif %}
+                    {% if perms.login.borrower_perms %}
                     <li>
                         <a class="nav-link" href="{% url 'productCollections:view_collections' %}">View Collections</a>
                     </li>

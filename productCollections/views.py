@@ -15,6 +15,81 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from products.models import Equipment
 
 
+def view_collection(request, collection_id):
+    collection = get_object_or_404(Collection, id=collection_id)
+
+    # if request.method == "POST":
+
+    #     if "update_collection" in request.POST:
+    #         form = EditCollectionForm(request.POST, instance=collection)
+    #         if form.is_valid():
+    #             form.save()
+    #             messages.success(request, "Collection updated successfully.")
+    #             return redirect(
+    #                 "productCollections:edit_collection", collection_id=collection.id
+    #             )
+    #         else:
+    #             messages.error(request, "Please correct the errors below.")
+
+    #     elif "delete_collection" in request.POST:
+    #         collection.delete()
+    #         messages.success(request, "Collection deleted successfully.")
+    #         return redirect("productCollections:my_collections")
+
+    #     elif "add_product" in request.POST:
+    #         product_id = request.POST.get("product_id")
+    #         product = get_object_or_404(Equipment, id=product_id)
+
+    #         private_collections = product.collections.filter(
+    #             collection_privacy="private"
+    #         )
+    #         if private_collections.exists() and collection not in private_collections:
+    #             messages.error(
+    #                 request,
+    #                 "This product is already in a private collection and cannot be added to another collection.",
+    #             )
+    #             return redirect(
+    #                 "productCollections:edit_collection", collection_id=collection.id
+    #             )
+    #         product.collections.add(collection)
+    #         messages.success(request, "Product added successfully.")
+    #         return redirect(
+    #             "productCollections:edit_collection", collection_id=collection.id
+    #         )
+
+    #     elif "remove_product" in request.POST:
+    #         product_id = request.POST.get("product_id")
+    #         product = get_object_or_404(Equipment, id=product_id)
+    #         product.collections.remove(collection)
+    #         messages.success(request, "Product removed successfully.")
+    #         return redirect(
+    #             "productCollections:edit_collection", collection_id=collection.id
+    #         )
+    # else:
+    #
+    form = EditCollectionForm(instance=collection)
+
+    search_query = request.GET.get("search", "")
+    # products = Equipment.objects.none()
+    collection_products = Equipment.objects.filter(collections=collection)
+    products = collection_products
+    if search_query:
+        products = Equipment.objects.filter(
+            Q(name__icontains=search_query)
+            | Q(description__icontains=search_query)
+            | Q(brand__icontains=search_query)
+        )
+
+    context = {
+        "form": form,
+        "collection": collection,
+        "products": products,
+        "collection_products": collection_products,
+        "search_query": search_query,
+    }
+    return render(request, "productCollections/view_collection.html", context)
+
+
 @login_required
 def edit_collection(request, collection_id):
     collection = get_object_or_404(Collection, id=collection_id)
@@ -94,6 +169,12 @@ def collection_catalog(request):
     form = CollectionFilterForm(request.GET)
     queryset = Collection.objects.all()
     user = request.user
+    if request.user.has_perm("login.lender_perms"):
+        queryset = Collection.objects.get_queryset()
+    elif request.user.has_perm("login.borrower_perms"):
+        queryset = Collection.objects.filter(
+            Q(owner=request.user) | Q(collection_privacy="public")
+        )
 
     if form.is_valid():
         if form.cleaned_data["search"]:
