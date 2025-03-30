@@ -29,7 +29,6 @@
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for collections in collection_list %}
-        <!-- {% if perms.login.borrower_perms%} -->
         <div class="col">
             <div class="card h-100">
                 <div class="card-body">
@@ -49,7 +48,6 @@
                 </div>
             </div>
         </div>
-        <!-- {% endif %} -->
         {% empty %}
         <div class="col-12">
             <p class="text-center">No collections found matching your criteria.</p>

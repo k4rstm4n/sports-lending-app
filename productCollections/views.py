@@ -11,11 +11,9 @@ from login.models import Profile
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-# this is for debugging purposes- will probably have to be redone slightly next sprint (just this collection_catalog for viewing)
-# if your email is not in collection_private_userlist, dont show it
 def collection_catalog(request):
     form = CollectionFilterForm(request.GET)
-    queryset = Collection.objects.filter()
+    queryset = Collection.objects.all()
     user = request.user
 
     if form.is_valid():
