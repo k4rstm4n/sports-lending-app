@@ -33,7 +33,8 @@ def profile(request):
         if "main_submit" in request.POST:
             profile.fname = request.POST.get("fname")
             profile.lname = request.POST.get("lname")
-            profile.birth_date = request.POST.get("birth_date")
+            birth_date = request.POST.get("birth_date")
+            profile.birth_date = birth_date if birth_date else None 
             profile.address = request.POST.get("address")
             profile.city = request.POST.get("city")
             profile.state = request.POST.get("state")

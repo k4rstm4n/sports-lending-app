@@ -17,7 +17,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     fname = models.CharField(null=True, max_length=64)
     lname = models.CharField(null=True, max_length=64)
-    birth_date = models.DateField()
+    birth_date = models.DateField(null=True)
 
     address = models.CharField(null=True, max_length=128)
     city = models.CharField(null=True, max_length=64)
