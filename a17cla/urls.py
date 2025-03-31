@@ -29,4 +29,5 @@ urlpatterns = [
     path("login/", include("login.urls")),
     path("products/", include("products.urls")),
     path("accounts/", include("allauth.urls")),
+    path("productCollections/", include("productCollections.urls")),
 ]

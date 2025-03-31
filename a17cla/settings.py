@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "products",
     "django_bootstrap5",
     "storages",
+    "productCollections",
 ]
 
 
