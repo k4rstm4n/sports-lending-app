@@ -62,9 +62,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'products:product_catalog' %}">Products</a>
                     </li>
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login:profile' %}">Profile</a>
                     </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login:index' %}">Profile</a>
+                    </li>
+                    {% endif %}
                     {% if perms.login.lender_perms %}
                     <li>
                         <a class="nav-link" href="{% url 'products:create_equipment' %}">Add Equipment</a>
@@ -77,6 +83,8 @@
                     <li>
                         <a class="nav-link" href="{% url 'productCollections:my_collections' %}">My Collections</a>
                     </li>
+                    {% endif %}
+                    {% if perms.login.borrower_perms %}
                     <li>
                         <a class="nav-link" href="{% url 'productCollections:view_collections' %}">View Collections</a>
                     </li>

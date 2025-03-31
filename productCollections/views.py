@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.contrib import messages
 from .models import Collection
+from .forms import CollectionFilterForm, EditCollectionForm
 from .forms import *
 from django.views.generic.edit import CreateView
 from django.urls import reverse, reverse_lazy
@@ -8,16 +10,190 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.models import User, Permission
 from login.models import Profile
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from products.models import Equipment
 
 
-# this is for debugging purposes- will probably have to be redone slightly next sprint (just this collection_catalog for viewing)
-# if your email is not in collection_private_userlist, dont show it
+def view_collection(request, collection_id):
+    collection = get_object_or_404(Collection, id=collection_id)
+
+    # if request.method == "POST":
+
+    #     if "update_collection" in request.POST:
+    #         form = EditCollectionForm(request.POST, instance=collection)
+    #         if form.is_valid():
+    #             form.save()
+    #             messages.success(request, "Collection updated successfully.")
+    #             return redirect(
+    #                 "productCollections:edit_collection", collection_id=collection.id
+    #             )
+    #         else:
+    #             messages.error(request, "Please correct the errors below.")
+
+    #     elif "delete_collection" in request.POST:
+    #         collection.delete()
+    #         messages.success(request, "Collection deleted successfully.")
+    #         return redirect("productCollections:my_collections")
+
+    #     elif "add_product" in request.POST:
+    #         product_id = request.POST.get("product_id")
+    #         product = get_object_or_404(Equipment, id=product_id)
+
+    #         private_collections = product.collections.filter(
+    #             collection_privacy="private"
+    #         )
+    #         if private_collections.exists() and collection not in private_collections:
+    #             messages.error(
+    #                 request,
+    #                 "This product is already in a private collection and cannot be added to another collection.",
+    #             )
+    #             return redirect(
+    #                 "productCollections:edit_collection", collection_id=collection.id
+    #             )
+    #         product.collections.add(collection)
+    #         messages.success(request, "Product added successfully.")
+    #         return redirect(
+    #             "productCollections:edit_collection", collection_id=collection.id
+    #         )
+
+    #     elif "remove_product" in request.POST:
+    #         product_id = request.POST.get("product_id")
+    #         product = get_object_or_404(Equipment, id=product_id)
+    #         product.collections.remove(collection)
+    #         messages.success(request, "Product removed successfully.")
+    #         return redirect(
+    #             "productCollections:edit_collection", collection_id=collection.id
+    #         )
+    # else:
+    #
+    form = EditCollectionForm(instance=collection)
+
+    search_query = request.GET.get("search", "")
+    # products = Equipment.objects.none()
+    collection_products = Equipment.objects.filter(collections=collection)
+    products = collection_products
+    if search_query:
+        products = Equipment.objects.filter(
+            Q(name__icontains=search_query)
+            | Q(description__icontains=search_query)
+            | Q(brand__icontains=search_query)
+        )
+
+    context = {
+        "form": form,
+        "collection": collection,
+        "products": products,
+        "collection_products": collection_products,
+        "search_query": search_query,
+    }
+    return render(request, "productCollections/view_collection.html", context)
+
+
+@login_required
+def edit_collection(request, collection_id):
+    collection = get_object_or_404(Collection, id=collection_id)
+
+    if request.method == "POST":
+
+        if "update_collection" in request.POST:
+            form = EditCollectionForm(request.POST, instance=collection)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Collection updated successfully.")
+                return redirect(
+                    "productCollections:edit_collection", collection_id=collection.id
+                )
+            else:
+                messages.error(request, "Please correct the errors below.")
+
+        elif "delete_collection" in request.POST:
+            collection.delete()
+            messages.success(request, "Collection deleted successfully.")
+            return redirect("productCollections:my_collections")
+
+        elif "add_product" in request.POST:
+            product_id = request.POST.get("product_id")
+            product = get_object_or_404(Equipment, id=product_id)
+
+            private_collections = product.collections.filter(
+                collection_privacy="private"
+            )
+            if private_collections.exists() and collection not in private_collections:
+                messages.error(
+                    request,
+                    "This product is already in a private collection and cannot be added to another collection.",
+                )
+                return redirect(
+                    "productCollections:edit_collection", collection_id=collection.id
+                )
+            product.collections.add(collection)
+            messages.success(request, "Product added successfully.")
+            return redirect(
+                "productCollections:edit_collection", collection_id=collection.id
+            )
+
+        elif "remove_product" in request.POST:
+            product_id = request.POST.get("product_id")
+            product = get_object_or_404(Equipment, id=product_id)
+            product.collections.remove(collection)
+            messages.success(request, "Product removed successfully.")
+            return redirect(
+                "productCollections:edit_collection", collection_id=collection.id
+            )
+    else:
+        form = EditCollectionForm(instance=collection)
+
+    search_query = request.GET.get("search", "")
+    # products = Equipment.objects.none()
+    collection_products = Equipment.objects.filter(collections=collection)
+    products = collection_products
+    if search_query:
+        products = Equipment.objects.filter(
+            Q(name__icontains=search_query)
+            | Q(description__icontains=search_query)
+            | Q(brand__icontains=search_query)
+        )
+
+    context = {
+        "form": form,
+        "collection": collection,
+        "products": products,
+        "collection_products": collection_products,
+        "search_query": search_query,
+    }
+    return render(request, "productCollections/edit_collection.html", context)
+
+
 def collection_catalog(request):
-    queryset = Collection.objects.filter()
+    form = CollectionFilterForm(request.GET)
+    queryset = Collection.objects.all()
+    user = request.user
+    if request.user.has_perm("login.lender_perms"):
+        queryset = Collection.objects.get_queryset()
+    elif request.user.has_perm("login.borrower_perms"):
+        queryset = Collection.objects.filter(
+            Q(owner=request.user) | Q(collection_privacy="public")
+        )
 
-    context = {"collection_list": queryset}
-    return render(request, "productCollections/view_collections.html", context)
+    if form.is_valid():
+        if form.cleaned_data["search"]:
+            search_query = form.cleaned_data["search"]
+            queryset = queryset.filter(
+                Q(collection_name__icontains=search_query)
+                | Q(collection_description__icontains=search_query)
+            )
+
+        if form.cleaned_data["collection_privacy"]:
+            queryset = queryset.filter(
+                collection_privacy=form.cleaned_data["collection_privacy"]
+            )
+
+        context = {
+            "form": form,
+            "collection_list": queryset,
+        }
+        return render(request, "productCollections/view_collections.html", context)
 
 
 class MakeCollectionsCreateView(LoginRequiredMixin, CreateView):
@@ -49,9 +225,9 @@ class MakeCollectionsCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        # print(f"User: {self.request.user}")
+
         self.object.owner = self.request.user
-        # print(f"Object Owner: {self.object.owner}")
+
         self.object.created_at = timezone.now()
 
         self.object.save()
@@ -60,25 +236,22 @@ class MakeCollectionsCreateView(LoginRequiredMixin, CreateView):
 
         return redirect(reverse("productCollections:make_collections"))
 
+
 def my_collections(request):
     form = CollectionFilterForm(request.GET)
 
-    if request.user.has_perm('login.lender_perms'):
+    if request.user.has_perm("login.lender_perms"):
         queryset = Collection.objects.get_queryset()
-    elif request.user.has_perm('login.borrower_perms'):
-        queryset = Collection.objects.filter(owner = request.user)
-
+    elif request.user.has_perm("login.borrower_perms"):
+        queryset = Collection.objects.filter(owner=request.user)
 
     if form.is_valid():
-        if form.cleaned_data['search']:
-            search_query = form.cleaned_data['search']
+        if form.cleaned_data["search"]:
+            search_query = form.cleaned_data["search"]
             queryset = queryset.filter(
-                Q(collection_name__icontains=search_query) |
-                Q(collection_description__icontains=search_query)
+                Q(collection_name__icontains=search_query)
+                | Q(collection_description__icontains=search_query)
             )
 
-        context = {
-            'form': form,
-            'collection_list': queryset
-        }
-        return render(request, 'productCollections/catalog.html', context)
+        context = {"form": form, "collection_list": queryset}
+        return render(request, "productCollections/catalog.html", context)
