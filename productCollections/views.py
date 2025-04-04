@@ -177,6 +177,8 @@ def collection_catalog(request):
         queryset = Collection.objects.filter(
             Q(owner=request.user) | Q(collection_privacy="public")
         )
+    else:
+        queryset = Collection.objects.filter(Q(collection_privacy="public"))
 
     if form.is_valid():
         if form.cleaned_data["search"]:

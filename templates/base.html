@@ -84,13 +84,10 @@
                         <a class="nav-link" href="{% url 'productCollections:my_collections' %}">My Collections</a>
                     </li>
                     {% endif %}
-                    {% if perms.login.borrower_perms %}
                     <li>
                         <a class="nav-link" href="{% url 'productCollections:view_collections' %}">View Collections</a>
                     </li>
-                    {% endif %}
 
-                    
                     {% if perms.login.lender_perms %}
                     <li>
                         <a class="nav-link" href="{% url 'products:my_products' request.user.pk %}">My Products</a>
