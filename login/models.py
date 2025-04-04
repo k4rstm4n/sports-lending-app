@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -18,7 +19,8 @@ class Profile(models.Model):
     fname = models.CharField(null=True, max_length=64)
     lname = models.CharField(null=True, max_length=64)
     birth_date = models.DateField(null=True)
-
+    email = models.EmailField()
+    date_joined = models.DateTimeField(default=now)
     address = models.CharField(null=True, max_length=128)
     city = models.CharField(null=True, max_length=64)
     state = models.CharField(null=True, max_length=5)
