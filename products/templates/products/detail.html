@@ -61,18 +61,19 @@
                     </div>
 
 
-                    {% if user.groups.all.0.name == "Borrowers" %}
+                    {%if perms.login.borrower_perms %}
                     <a href="{% url 'products:product_rent' equipment.id %}" class="btn btn-outline-secondary">
                         <i class=""></i>Rent
                     </a>
                     {% endif %}
 
-                    {% if user.groups.all.0.name == "Lenders" %}
+                    {%if perms.login.lender_perms %}
                     <a href="#" class="btn btn-outline-secondary">
                         <i class=""></i>View Requests
                     </a>
                     {% endif %}
 
+                    {% if perms.login.lender_perms %}
                     <div class="d-flex justify-content-start mt-4">
                         <a href="{% url 'products:edit_equipment' equipment.id %}" class="btn btn-outline-secondary">
                             <i></i> Edit
@@ -85,6 +86,7 @@
                             </button>
                         </form>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
