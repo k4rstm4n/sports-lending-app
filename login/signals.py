@@ -3,13 +3,13 @@ from allauth.account.signals import user_signed_up
 from django.dispatch import receiver
 from login.models import Profile
 from allauth.socialaccount.models import SocialAccount
+from django.contrib.auth.models import Permission
 
 @receiver(user_signed_up)
 def add_to_borrowers_group(request, user, **kwargs):
-    borrowers_group, _ = Group.objects.get_or_create(name="Borrowers")
-
-    if not user.groups.filter(name="Borrowers").exists():
-        user.groups.add(borrowers_group)
+    user.user_permissions.add(
+                    Permission.objects.get(name="Global borrower permissions")
+                )
 
 @receiver(user_signed_up)
 def create_profile(request, user, **kwargs):
