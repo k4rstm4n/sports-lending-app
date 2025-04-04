@@ -10,6 +10,9 @@
     {% if profile.image %}
     <img src="{{profile.image.url}}" class="card-img-top">
     {% endif %}
+    <label>Email: {{ user.email }}</label><br><br>
+    <label>User since: {{ user.date_joined.date }}</label>
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
