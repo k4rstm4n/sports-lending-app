@@ -77,6 +77,7 @@ def view_collection(request, collection_id):
         products = Equipment.objects.filter(
             Q(name__icontains=search_query)
             | Q(description__icontains=search_query)
+            | Q(location__icontains=search_query)
             | Q(brand__icontains=search_query)
         )
 
@@ -152,6 +153,7 @@ def edit_collection(request, collection_id):
         products = Equipment.objects.filter(
             Q(name__icontains=search_query)
             | Q(description__icontains=search_query)
+            | Q(location__icontains=search_query)
             | Q(brand__icontains=search_query)
         )
 

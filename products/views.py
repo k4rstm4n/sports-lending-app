@@ -23,6 +23,7 @@ def product_catalog(request):
             queryset = queryset.filter(
                 Q(name__icontains=search_query)
                 | Q(description__icontains=search_query)
+                | Q(location__icontains=search_query)
                 | Q(brand__icontains=search_query)
             )
 
@@ -107,6 +108,7 @@ class EquipmentUpdateView(UpdateView):
     fields = [
         "name",
         "description",
+        "location",
         "price_per_day",
         "condition",
         "category",
@@ -149,6 +151,7 @@ class EquipmentCreateView(CreateView):
     fields = [
         "name",
         "description",
+        "location",
         "price_per_day",
         "condition",
         "category",
