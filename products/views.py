@@ -193,12 +193,13 @@ def rent_equipment(request, borrow_request_id):
     # create rental record
     Rental.objects.create(user=borrower, equipment=equipment)
     borrow_request.delete()
-    return
+    return redirect(reverse("products:manage_requests"))
+
 
 def deny_equipment(request, borrow_request_id):
     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
     borrow_request.delete()
-    return
+    return redirect(reverse("products:manage_requests"))
 
 
 class RequestsView(DetailView):
