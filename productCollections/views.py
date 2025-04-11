@@ -129,8 +129,10 @@ def edit_collection(request, collection_id):
                     "productCollections:edit_collection", collection_id=collection.id
                 )
             if collection.collection_privacy == "private":
-                #print("private, try remove")
-                public_collections = product.collections.filter(collection_privacy="public")
+                # print("private, try remove")
+                public_collections = product.collections.filter(
+                    collection_privacy="public"
+                )
                 for public_collection in public_collections:
                     product.collections.remove(public_collection)
             product.collections.add(collection)
@@ -182,12 +184,10 @@ def collection_catalog(request):
     form = CollectionFilterForm(request.GET)
     queryset = Collection.objects.all()
     user = request.user
-    if request.user.has_perm("login.lender_perms"):
+    if request.user.has_perm("login.lender_perms") or request.user.has_perm(
+        "login.borrower_perms"
+    ):
         queryset = Collection.objects.get_queryset()
-    elif request.user.has_perm("login.borrower_perms"):
-        queryset = Collection.objects.filter(
-            Q(owner=request.user) | Q(collection_privacy="public")
-        )
     else:
         queryset = Collection.objects.filter(Q(collection_privacy="public"))
 
