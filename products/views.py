@@ -11,11 +11,13 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import messages
+from productCollections.models import Collection
 
 
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
-    queryset = Equipment.objects.filter(status="available")
+    private_collections = Collection.objects.filter(collection_privacy = "private")
+    queryset = Equipment.objects.filter(status="available").exclude(collections__in = private_collections)
 
     if form.is_valid():
         if form.cleaned_data["search"]:
