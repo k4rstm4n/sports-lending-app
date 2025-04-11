@@ -75,6 +75,9 @@
                     <li>
                         <a class="nav-link" href="{% url 'products:create_equipment' %}">Add Equipment</a>
                     </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'products:manage_requests' %}">Manage Requests</a>
+                    </li>
                     {% endif %}
                     {% if perms.login.lender_perms or perms.login.borrower_perms %}
                     <li>
