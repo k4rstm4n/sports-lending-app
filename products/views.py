@@ -11,11 +11,13 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import messages
+from productCollections.models import Collection
 
 
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
-    queryset = Equipment.objects.filter(status="available")
+    private_collections = Collection.objects.filter(collection_privacy = "private")
+    queryset = Equipment.objects.filter(status="available").exclude(collections__in = private_collections)
 
     if form.is_valid():
         if form.cleaned_data["search"]:
@@ -63,7 +65,14 @@ class ProductDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["requested"] = Borrow_Request.objects.filter(user=self.request.user, equipment=self.get_object())
+        user = self.request.user
+
+        if user.has_perm("login.borrower_perms") or user.has_perm(
+            "borrower.borrower_perms"
+        ):
+            context["requested"] = Borrow_Request.objects.filter(
+                user=self.request.user, equipment=self.get_object()
+            )
         context["reviews"] = self.object.reviews.all()  # fetch related reviews
         return context
 
@@ -78,12 +87,11 @@ class ProductDetailView(generic.DetailView):
         if request.method == "POST":
             product.delete()
             return redirect("/products")
-        
+
     def request_product(request, pk):
         product = Equipment.objects.get(pk=pk)
         Borrow_Request.objects.create(user=request.user, equipment=product)
         return redirect("/products")
-
 
 
 class ReviewCreate(CreateView):
