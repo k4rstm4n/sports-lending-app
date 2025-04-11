@@ -157,6 +157,11 @@ def edit_collection(request, collection_id):
             | Q(brand__icontains=search_query)
         )
 
+    user = request.user
+    if user.has_perm("login.borrower_perms"):
+        form.fields.pop("collection_privacy")
+        form.fields.pop("collection_private_userlist")
+
     context = {
         "form": form,
         "collection": collection,
