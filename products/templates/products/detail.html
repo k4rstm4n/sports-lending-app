@@ -57,12 +57,14 @@
                             <i class="bi bi-arrow-left"></i> Back to Catalog
                         </a>
                     </div>
-
+                    {% if perms.login.lender_perms or perms.login.borrower_perms %}
                     <div class="d-flex justify-content-between mt-4">
                         <a href="{% url 'products:product_review' equipment.id %}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-right"></i> Post a Review
                         </a>
                     </div>
+                    {% endif %}
+
 
                     <div>
                         <li class="list-group-item">
