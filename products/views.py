@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
-from .models import Equipment, Review, Rental
+from .models import Equipment, Review, Rental, Borrow_Request
 from .forms import *
 from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import DetailView, UpdateView, ListView
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
@@ -63,6 +63,7 @@ class ProductDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["requested"] = Borrow_Request.objects.filter(user=self.request.user, equipment=self.get_object())
         context["reviews"] = self.object.reviews.all()  # fetch related reviews
         return context
 
@@ -77,6 +78,12 @@ class ProductDetailView(generic.DetailView):
         if request.method == "POST":
             product.delete()
             return redirect("/products")
+        
+    def request_product(request, pk):
+        product = Equipment.objects.get(pk=pk)
+        Borrow_Request.objects.create(user=request.user, equipment=product)
+        return redirect("/products")
+
 
 
 class ReviewCreate(CreateView):
@@ -167,12 +174,12 @@ class EquipmentCreateView(CreateView):
         return redirect(reverse("products:product_catalog"))
 
 
-def rent_equipment(request, equipment_id):
+def rent_equipment(request, borrow_request_id):
     if not request.user.is_authenticated:
         return redirect("login")
-
-    equipment = get_object_or_404(Equipment, id=equipment_id)
-
+    borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
+    equipment = borrow_request.equipment
+    borrower = borrow_request.user
     if equipment.status != "available":
         return render(
             request,
@@ -184,9 +191,14 @@ def rent_equipment(request, equipment_id):
     equipment.save()
 
     # create rental record
-    Rental.objects.create(user=request.user, equipment=equipment)
+    Rental.objects.create(user=borrower, equipment=equipment)
+    borrow_request.delete()
+    return
 
-    return render(request, "products/rental_success.html", {"equipment": equipment})
+def deny_equipment(request, borrow_request_id):
+    borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
+    borrow_request.delete()
+    return
 
 
 class RequestsView(DetailView):
@@ -199,3 +211,8 @@ class RequestsView(DetailView):
         equipment = self.get_object()
         context["rental_requests"] = Rental.objects.filter(equipment=equipment)
         return context
+
+
+class ManageRequests(ListView):
+    model = Borrow_Request
+    template_name = "products/manage_requests.html"

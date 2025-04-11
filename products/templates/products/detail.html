@@ -63,9 +63,13 @@
 
 
                     {%if perms.login.borrower_perms %}
-                    <a href="{% url 'products:product_rent' equipment.id %}" class="btn btn-outline-secondary">
-                        <i class=""></i>Rent
-                    </a>
+                        {%if requested%}
+                            <p class="text-muted">Request Pending</p>
+                        {%else%}
+                            <a href="{% url 'products:request_product' equipment.id %}" class="btn btn-outline-secondary">
+                                <i class=""></i>Request to Borrow
+                            </a>
+                        {%endif%}
                     {% endif %}
 
                     {%if perms.login.lender_perms %}

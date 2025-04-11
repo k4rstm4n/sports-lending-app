@@ -20,7 +20,9 @@ urlpatterns = [
         views.ReviewUpdate.as_view(),
         name="product_review_update",
     ),
-    path("<int:equipment_id>/rent/", views.rent_equipment, name="product_rent"),
+    path("<int:borrow_request_id>/rent/", views.rent_equipment, name="product_rent"),
+    path("<int:borrow_request_id>/deny/", views.deny_equipment, name="product_deny"),
+
     path("user/<int:pk>/my-products/", views.my_products, name="my_products"),
     path(
         "<int:equipment_id>/requests/",
@@ -33,5 +35,13 @@ urlpatterns = [
         views.ProductDetailView.delete_product,
         name="delete_product",
     ),
+    path(
+        "<int:pk>/borrow/",
+        views.ProductDetailView.request_product,
+        name="request_product",
+    ),
+    path("manage_requests/",
+         views.ManageRequests.as_view(),
+         name="manage_requests")
     # products/{productID}
 ]
