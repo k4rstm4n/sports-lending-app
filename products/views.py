@@ -63,7 +63,14 @@ class ProductDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["requested"] = Borrow_Request.objects.filter(user=self.request.user, equipment=self.get_object())
+        user = self.request.user
+
+        if user.has_perm("login.borrower_perms") or user.has_perm(
+            "borrower.borrower_perms"
+        ):
+            context["requested"] = Borrow_Request.objects.filter(
+                user=self.request.user, equipment=self.get_object()
+            )
         context["reviews"] = self.object.reviews.all()  # fetch related reviews
         return context
 
@@ -78,12 +85,11 @@ class ProductDetailView(generic.DetailView):
         if request.method == "POST":
             product.delete()
             return redirect("/products")
-        
+
     def request_product(request, pk):
         product = Equipment.objects.get(pk=pk)
         Borrow_Request.objects.create(user=request.user, equipment=product)
         return redirect("/products")
-
 
 
 class ReviewCreate(CreateView):
