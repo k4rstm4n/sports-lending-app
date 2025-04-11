@@ -30,14 +30,3 @@ class Collection(models.Model):
     def __str__(self):
         return self.collection_name
 
-
-class Equipment(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-
-    # collections = models.ManyToManyField(
-    #     Collection, blank=True, related_name="equipments"
-    # )
-
-    def __str__(self):
-        return self.name
