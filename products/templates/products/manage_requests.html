@@ -12,13 +12,17 @@
             <a href="{% url 'products:product_detail' borrow_request.equipment.id %}">{{borrow_request.equipment.name}}</a>
             on {{ borrow_request.timestamp}}
 
+            {% if borrow_request.equipment.status == 'available' %}
+            <a href="{% url 'products:product_rent' borrow_request.id%}" class="btn btn-outline-secondary">
+                <i class=""></i>Approve
+            </a>
+            {% else %}
+            Unavailable
+            {% endif %}
+            <a href="{% url 'products:product_deny' borrow_request.id%}" class="btn btn-outline-secondary">
+                <i class=""></i>Deny
+            </a>
         </p>
-        <a href="{% url 'products:product_rent' borrow_request.id%}" class="btn btn-outline-secondary">
-            <i class=""></i>Approve
-        </a>
-        <a href="{% url 'products:product_deny' borrow_request.id%}" class="btn btn-outline-secondary">
-            <i class=""></i>Deny
-        </a>
     {% endfor %}
     </ul>
 {% endblock %}
