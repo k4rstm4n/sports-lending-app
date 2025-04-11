@@ -82,7 +82,7 @@ class ProductDetailView(generic.DetailView):
     def request_product(request, pk):
         product = Equipment.objects.get(pk=pk)
         Borrow_Request.objects.create(user=request.user, equipment=product)
-        return redirect("/products")
+        return redirect(f"/products/{pk}/details/")
 
 
 
