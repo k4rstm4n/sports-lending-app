@@ -93,8 +93,8 @@
 
 
                     {%if perms.login.lender_perms %}
-                    <a href="#" class="btn btn-outline-secondary">
-                        <i class=""></i>View Requests
+                    <a href="{% url 'products:manage_requests' %}" class="btn btn-outline-secondary">
+                        <i class=""></i>Manage Product Borrow Requests
                     </a>
                     {% endif %}
 
