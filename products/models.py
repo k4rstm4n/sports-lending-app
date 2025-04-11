@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from productCollections.models import Collection
-
+from django.db.models import UniqueConstraint
 
 import uuid
 
@@ -71,3 +71,18 @@ class Review(models.Model):
         choices=[(i, str(i)) for i in range(1, 6)]
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+class Borrow_Request(models.Model):
+    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['equipment', 'user'], name='request_only_once')
+        ]
+    # STATUS_CHOICES = [
+    #     ("pending", "Pending"),
+    #     ("approved", "Approved"),
+    #     ("denied", "Denied")
+    # ]
