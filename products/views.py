@@ -173,13 +173,18 @@ class EquipmentCreateView(CreateView):
         self.object.save()
         return redirect(reverse("products:product_catalog"))
 
+from allauth.account.models import EmailAddress
+from django.core.mail import send_mail
 
 def rent_equipment(request, borrow_request_id):
+    """Handles borrow request approval"""
     if not request.user.is_authenticated:
         return redirect("login")
     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
     equipment = borrow_request.equipment
     borrower = borrow_request.user
+    borrower_email = EmailAddress.objects.get(user=borrower).email
+
     if equipment.status != "available":
         return render(
             request,
@@ -193,6 +198,17 @@ def rent_equipment(request, borrow_request_id):
     # create rental record
     Rental.objects.create(user=borrower, equipment=equipment)
     borrow_request.delete()
+
+
+    #! SEND MAIL HERE 
+    send_mail(
+        "A-17 Renting Request Approval",
+        "Thank you for using A-17! You're request has been approved!",
+        "a17cla3240@gmail.com",
+        [borrower_email],
+        fail_silently=False,
+    )
+    print("successfully sent mail")
     return redirect(reverse("products:manage_requests"))
 
 

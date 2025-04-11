@@ -226,3 +226,12 @@ try:
         django_heroku.settings(locals())
 except ImportError:
     found = False
+
+
+# SMTP EMAIL CONFIG
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "a17cla3240@gmail.com"
+EMAIL_HOST_PASSWORD = "mlzt qbgg cmkc xbpn"
