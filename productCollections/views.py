@@ -127,8 +127,14 @@ def edit_collection(request, collection_id):
                 return redirect(
                     "productCollections:edit_collection", collection_id=collection.id
                 )
+            if collection.collection_privacy == "private":
+                #print("private, try remove")
+                public_collections = product.collections.filter(collection_privacy="public")
+                for public_collection in public_collections:
+                    product.collections.remove(public_collection)
             product.collections.add(collection)
             messages.success(request, "Product added successfully.")
+
             return redirect(
                 "productCollections:edit_collection", collection_id=collection.id
             )
