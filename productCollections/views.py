@@ -274,44 +274,44 @@ def my_collections(request):
         return render(request, "productCollections/catalog.html", context)
 
 
-# def rent_equipment(request, borrow_request_id):
-#     if not request.user.is_authenticated:
-#         return redirect("login")
-#     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
-#     equipment = borrow_request.equipment
-#     borrower = borrow_request.user
-#     if equipment.status != "available":
-#         return render(
-#             request,
-#             "products/rental_failure.html",
-#             {"error": "Equipment is unavailable"},
-#         )
+def approve_collection(request, collection_request_id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    borrow_request = get_object_or_404(Collection_Request, id=collection_request_id)
+    equipment = borrow_request.equipment
+    borrower = borrow_request.user
+    if equipment.status != "available":
+        return render(
+            request,
+            "products/rental_failure.html",
+            {"error": "Equipment is unavailable"},
+        )
 
-#     equipment.status = "unavailable"
-#     equipment.save()
+    equipment.status = "unavailable"
+    equipment.save()
 
-#     # create rental record
-#     Rental.objects.create(user=borrower, equipment=equipment)
-#     borrow_request.delete()
-#     return redirect(reverse("products:manage_requests"))
-
-
-# def deny_equipment(request, borrow_request_id):
-#     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
-#     borrow_request.delete()
-#     return redirect(reverse("products:manage_requests"))
+    # create rental record
+    Rental.objects.create(user=borrower, equipment=equipment)
+    borrow_request.delete()
+    return redirect(reverse("products:manage_requests"))
 
 
-# class RequestsView(DetailView):
-#     model = Equipment
-#     template_name = "products/requests.html"
-#     pk_url_kwarg = "equipment_id"
+def deny_collection(request, collection_request_id):
+    borrow_request = get_object_or_404(Collection_Request, id=collection_request_id)
+    borrow_request.delete()
+    return redirect(reverse("products:manage_requests"))
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         equipment = self.get_object()
-#         context["rental_requests"] = Rental.objects.filter(equipment=equipment)
-#         return context
+
+class RequestsView(DetailView):
+    model = Collection
+    template_name = "productCollections/requests.html"
+    pk_url_kwarg = "equipment_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        equipment = self.get_object()
+        context["rental_requests"] = Rental.objects.filter(equipment=equipment)
+        return context
 
 
 class ManageCollectionRequests(LoginRequiredMixin, ListView):

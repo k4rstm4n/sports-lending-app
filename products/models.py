@@ -72,6 +72,7 @@ class Review(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 class Borrow_Request(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -79,8 +80,9 @@ class Borrow_Request(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['equipment', 'user'], name='request_only_once')
+            UniqueConstraint(fields=["equipment", "user"], name="request_only_once")
         ]
+
     # STATUS_CHOICES = [
     #     ("pending", "Pending"),
     #     ("approved", "Approved"),

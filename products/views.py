@@ -53,10 +53,13 @@ def product_catalog(request):
 
 
 def my_products(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    equipment_list = Equipment.objects.filter(owner=user)
-    context = {"equipment_list": equipment_list}
-    return render(request, "products/my_equipment.html", context)
+    if request.user.has_perm("login.lender_perms"):
+        user = get_object_or_404(User, pk=pk)
+        equipment_list = Equipment.objects.filter(owner=user)
+        context = {"equipment_list": equipment_list}
+        return render(request, "products/my_equipment.html", context)
+    else:
+        return redirect("/login/")
 
 
 class ProductDetailView(generic.DetailView):
@@ -170,7 +173,7 @@ class ReviewUpdate(UpdateView):
         return super().form_valid(form)
 
 
-class EquipmentCreateView(CreateView):
+class EquipmentCreateView(LoginRequiredMixin, CreateView):
     model = Equipment
     fields = [
         "name",
@@ -182,6 +185,9 @@ class EquipmentCreateView(CreateView):
         "brand",
         "image",
     ]
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -193,7 +199,7 @@ class EquipmentCreateView(CreateView):
 
 def rent_equipment(request, borrow_request_id):
     if not request.user.is_authenticated:
-        return redirect("login")
+        return redirect("/login/")
     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
     equipment = borrow_request.equipment
     borrower = borrow_request.user
