@@ -27,7 +27,6 @@ urlpatterns = [
         views.ManageCollectionRequests.as_view(),
         name="manage_collection_requests",
     ),
-    ####
     path(
         "<int:collection_request_id>/approve/",
         views.approve_collection,
@@ -37,10 +36,5 @@ urlpatterns = [
         "<int:collection_request_id>/deny/",
         views.deny_collection,
         name="collection_deny",
-    ),
-    path(
-        "<int:collection_id>/requests/",
-        views.RequestsView.as_view(),
-        name="collection_requests",
     ),
 ]

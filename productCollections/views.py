@@ -278,41 +278,17 @@ def approve_collection(request, collection_request_id):
     if not request.user.is_authenticated:
         return redirect("login")
     borrow_request = get_object_or_404(Collection_Request, id=collection_request_id)
-    equipment = borrow_request.equipment
-    borrower = borrow_request.user
-    if equipment.status != "available":
-        return render(
-            request,
-            "products/rental_failure.html",
-            {"error": "Equipment is unavailable"},
-        )
-
-    equipment.status = "unavailable"
-    equipment.save()
-
-    # create rental record
-    Rental.objects.create(user=borrower, equipment=equipment)
+    collection_to_borrow = borrow_request.collection
+    collection_to_borrow.collection_private_userlist.add(borrow_request.user)
+    collection_to_borrow.save()
     borrow_request.delete()
-    return redirect(reverse("products:manage_requests"))
+    return redirect(reverse("productCollections:manage_collection_requests"))
 
 
 def deny_collection(request, collection_request_id):
     borrow_request = get_object_or_404(Collection_Request, id=collection_request_id)
     borrow_request.delete()
-    return redirect(reverse("products:manage_requests"))
-
-
-class RequestsView(DetailView):
-    model = Collection
-    template_name = "productCollections/requests.html"
-    pk_url_kwarg = "equipment_id"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        equipment = self.get_object()
-        context["rental_requests"] = Rental.objects.filter(equipment=equipment)
-        return context
-
+    return redirect(reverse("productCollections:manage_collection_requests"))
 
 class ManageCollectionRequests(LoginRequiredMixin, ListView):
     model = Collection_Request
@@ -320,3 +296,10 @@ class ManageCollectionRequests(LoginRequiredMixin, ListView):
     # redirect if not logged in
     login_url = "/login/"
     redirect_field_name = "next"
+    def post(self, request, *args, **kwargs):
+        collection_id = request.POST.get("collection_id")
+        collection = get_object_or_404(Collection, id=collection_id)
+        Collection_Request.objects.get_or_create(
+            collection=collection, user=request.user
+        )
+        return redirect(reverse("productCollections:view_collections"))
