@@ -12,12 +12,15 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import messages
 from productCollections.models import Collection
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
-    private_collections = Collection.objects.filter(collection_privacy = "private")
-    queryset = Equipment.objects.filter(status="available").exclude(collections__in = private_collections)
+    private_collections = Collection.objects.filter(collection_privacy="private")
+    queryset = Equipment.objects.filter(status="available").exclude(
+        collections__in=private_collections
+    )
 
     if form.is_valid():
         if form.cleaned_data["search"]:
@@ -94,11 +97,14 @@ class ProductDetailView(generic.DetailView):
         return redirect("/products")
 
 
-class ReviewCreate(CreateView):
+class ReviewCreate(LoginRequiredMixin, CreateView):
     model = Review
     form_class = ReviewForm
     template_name = "products/review_form.html"
     success_url = reverse_lazy("products:product_catalog")
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -118,7 +124,7 @@ class ReviewCreate(CreateView):
         return super().form_valid(form)
 
 
-class EquipmentUpdateView(UpdateView):
+class EquipmentUpdateView(LoginRequiredMixin, UpdateView):
     model = Equipment
     fields = [
         "name",
@@ -131,6 +137,9 @@ class EquipmentUpdateView(UpdateView):
         "image",
     ]
     template_name = "products/equipment_form.html"
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"
 
     def get_success_url(self):
         # After successful update, redirect to product detail page
@@ -222,6 +231,9 @@ class RequestsView(DetailView):
         return context
 
 
-class ManageRequests(ListView):
+class ManageRequests(LoginRequiredMixin, ListView):
     model = Borrow_Request
     template_name = "products/manage_requests.html"
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"

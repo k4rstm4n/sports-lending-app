@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.contrib import messages
-from .models import Collection
+from .models import Collection, Collection_Request
 from .forms import CollectionFilterForm, EditCollectionForm
 from .forms import *
 from django.views.generic.edit import CreateView
+from django.views.generic import DetailView, UpdateView, ListView
+
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
@@ -270,3 +272,51 @@ def my_collections(request):
 
         context = {"form": form, "collection_list": queryset}
         return render(request, "productCollections/catalog.html", context)
+
+
+# def rent_equipment(request, borrow_request_id):
+#     if not request.user.is_authenticated:
+#         return redirect("login")
+#     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
+#     equipment = borrow_request.equipment
+#     borrower = borrow_request.user
+#     if equipment.status != "available":
+#         return render(
+#             request,
+#             "products/rental_failure.html",
+#             {"error": "Equipment is unavailable"},
+#         )
+
+#     equipment.status = "unavailable"
+#     equipment.save()
+
+#     # create rental record
+#     Rental.objects.create(user=borrower, equipment=equipment)
+#     borrow_request.delete()
+#     return redirect(reverse("products:manage_requests"))
+
+
+# def deny_equipment(request, borrow_request_id):
+#     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
+#     borrow_request.delete()
+#     return redirect(reverse("products:manage_requests"))
+
+
+# class RequestsView(DetailView):
+#     model = Equipment
+#     template_name = "products/requests.html"
+#     pk_url_kwarg = "equipment_id"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         equipment = self.get_object()
+#         context["rental_requests"] = Rental.objects.filter(equipment=equipment)
+#         return context
+
+
+class ManageCollectionRequests(LoginRequiredMixin, ListView):
+    model = Collection_Request
+    template_name = "productCollections/manage_collection_requests.html"
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"

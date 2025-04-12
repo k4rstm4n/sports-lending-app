@@ -45,8 +45,14 @@
                             {% endfor %}
                         </li>
                     </ul>
+                    {% if collections.collection_privacy == "private" and perms.login.borrower_perms %}
+                    <a href="{% url 'productCollections:manage_collection_requests' %}" class="btn btn-warning">
+                        Request access</a>
+                    {% else %}
                     <a href="{% url 'productCollections:view_collection' collections.id %}" class="btn btn-primary">View
                         Collection</a>
+                    {% endif %}
+
                 </div>
             </div>
         </div>

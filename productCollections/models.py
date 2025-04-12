@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import UniqueConstraint
 
 
 class Collection(models.Model):
@@ -30,3 +31,15 @@ class Collection(models.Model):
     def __str__(self):
         return self.collection_name
 
+
+class Collection_Request(models.Model):
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["collection", "user"], name="request_collection_once"
+            )
+        ]

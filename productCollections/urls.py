@@ -22,4 +22,9 @@ urlpatterns = [
         views.view_collection,
         name="view_collection",
     ),
+    path(
+        "manage_collection_requests/",
+        views.ManageCollectionRequests.as_view(),
+        name="manage_collection_requests",
+    ),
 ]
