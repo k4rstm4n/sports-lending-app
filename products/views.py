@@ -12,12 +12,15 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib import messages
 from productCollections.models import Collection
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
-    private_collections = Collection.objects.filter(collection_privacy = "private")
-    queryset = Equipment.objects.filter(status="available").exclude(collections__in = private_collections)
+    private_collections = Collection.objects.filter(collection_privacy="private")
+    queryset = Equipment.objects.filter(status="available").exclude(
+        collections__in=private_collections
+    )
 
     if form.is_valid():
         if form.cleaned_data["search"]:
@@ -50,10 +53,13 @@ def product_catalog(request):
 
 
 def my_products(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    equipment_list = Equipment.objects.filter(owner=user)
-    context = {"equipment_list": equipment_list}
-    return render(request, "products/my_equipment.html", context)
+    if request.user.has_perm("login.lender_perms"):
+        user = get_object_or_404(User, pk=pk)
+        equipment_list = Equipment.objects.filter(owner=user)
+        context = {"equipment_list": equipment_list}
+        return render(request, "products/my_equipment.html", context)
+    else:
+        return redirect("/login/")
 
 
 class ProductDetailView(generic.DetailView):
@@ -94,11 +100,14 @@ class ProductDetailView(generic.DetailView):
         return redirect("/products")
 
 
-class ReviewCreate(CreateView):
+class ReviewCreate(LoginRequiredMixin, CreateView):
     model = Review
     form_class = ReviewForm
     template_name = "products/review_form.html"
     success_url = reverse_lazy("products:product_catalog")
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -118,7 +127,7 @@ class ReviewCreate(CreateView):
         return super().form_valid(form)
 
 
-class EquipmentUpdateView(UpdateView):
+class EquipmentUpdateView(LoginRequiredMixin, UpdateView):
     model = Equipment
     fields = [
         "name",
@@ -131,6 +140,9 @@ class EquipmentUpdateView(UpdateView):
         "image",
     ]
     template_name = "products/equipment_form.html"
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"
 
     def get_success_url(self):
         # After successful update, redirect to product detail page
@@ -161,7 +173,7 @@ class ReviewUpdate(UpdateView):
         return super().form_valid(form)
 
 
-class EquipmentCreateView(CreateView):
+class EquipmentCreateView(LoginRequiredMixin, CreateView):
     model = Equipment
     fields = [
         "name",
@@ -173,6 +185,9 @@ class EquipmentCreateView(CreateView):
         "brand",
         "image",
     ]
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -184,7 +199,7 @@ class EquipmentCreateView(CreateView):
 
 def rent_equipment(request, borrow_request_id):
     if not request.user.is_authenticated:
-        return redirect("login")
+        return redirect("/login/")
     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
     equipment = borrow_request.equipment
     borrower = borrow_request.user
@@ -222,6 +237,9 @@ class RequestsView(DetailView):
         return context
 
 
-class ManageRequests(ListView):
+class ManageRequests(LoginRequiredMixin, ListView):
     model = Borrow_Request
     template_name = "products/manage_requests.html"
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"

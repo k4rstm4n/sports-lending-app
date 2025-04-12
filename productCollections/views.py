@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.contrib import messages
-from .models import Collection
+from .models import Collection, Collection_Request
 from .forms import CollectionFilterForm, EditCollectionForm
 from .forms import *
 from django.views.generic.edit import CreateView
+from django.views.generic import DetailView, UpdateView, ListView
+
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.utils import timezone
@@ -129,8 +131,10 @@ def edit_collection(request, collection_id):
                     "productCollections:edit_collection", collection_id=collection.id
                 )
             if collection.collection_privacy == "private":
-                #print("private, try remove")
-                public_collections = product.collections.filter(collection_privacy="public")
+                # print("private, try remove")
+                public_collections = product.collections.filter(
+                    collection_privacy="public"
+                )
                 for public_collection in public_collections:
                     product.collections.remove(public_collection)
             product.collections.add(collection)
@@ -182,12 +186,10 @@ def collection_catalog(request):
     form = CollectionFilterForm(request.GET)
     queryset = Collection.objects.all()
     user = request.user
-    if request.user.has_perm("login.lender_perms"):
+    if request.user.has_perm("login.lender_perms") or request.user.has_perm(
+        "login.borrower_perms"
+    ):
         queryset = Collection.objects.get_queryset()
-    elif request.user.has_perm("login.borrower_perms"):
-        queryset = Collection.objects.filter(
-            Q(owner=request.user) | Q(collection_privacy="public")
-        )
     else:
         queryset = Collection.objects.filter(Q(collection_privacy="public"))
 
@@ -270,3 +272,34 @@ def my_collections(request):
 
         context = {"form": form, "collection_list": queryset}
         return render(request, "productCollections/catalog.html", context)
+
+
+def approve_collection(request, collection_request_id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    borrow_request = get_object_or_404(Collection_Request, id=collection_request_id)
+    collection_to_borrow = borrow_request.collection
+    collection_to_borrow.collection_private_userlist.add(borrow_request.user)
+    collection_to_borrow.save()
+    borrow_request.delete()
+    return redirect(reverse("productCollections:manage_collection_requests"))
+
+
+def deny_collection(request, collection_request_id):
+    borrow_request = get_object_or_404(Collection_Request, id=collection_request_id)
+    borrow_request.delete()
+    return redirect(reverse("productCollections:manage_collection_requests"))
+
+class ManageCollectionRequests(LoginRequiredMixin, ListView):
+    model = Collection_Request
+    template_name = "productCollections/manage_collection_requests.html"
+    # redirect if not logged in
+    login_url = "/login/"
+    redirect_field_name = "next"
+    def post(self, request, *args, **kwargs):
+        collection_id = request.POST.get("collection_id")
+        collection = get_object_or_404(Collection, id=collection_id)
+        Collection_Request.objects.get_or_create(
+            collection=collection, user=request.user
+        )
+        return redirect(reverse("productCollections:view_collections"))

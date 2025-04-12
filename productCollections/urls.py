@@ -22,4 +22,19 @@ urlpatterns = [
         views.view_collection,
         name="view_collection",
     ),
+    path(
+        "manage_collection_requests/",
+        views.ManageCollectionRequests.as_view(),
+        name="manage_collection_requests",
+    ),
+    path(
+        "<int:collection_request_id>/approve/",
+        views.approve_collection,
+        name="collection_approve",
+    ),
+    path(
+        "<int:collection_request_id>/deny/",
+        views.deny_collection,
+        name="collection_deny",
+    ),
 ]
