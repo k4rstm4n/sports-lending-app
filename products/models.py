@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from productCollections.models import Collection
+from datetime import timedelta
 
 
 import uuid
@@ -56,10 +57,12 @@ class Equipment(models.Model):
 class Rental(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
-    rental_date = models.TimeField(auto_now_add=True)
+    rental_date = models.DateTimeField(auto_now_add=True)
     return_date = models.DateField(null=True, blank=True)
     active = models.BooleanField(default=True)
 
+def due_date(self):
+    return self.rental_date + timedelta(days=7)
 
 class Review(models.Model):
     equipment = models.ForeignKey(

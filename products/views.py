@@ -199,3 +199,33 @@ class RequestsView(DetailView):
         equipment = self.get_object()
         context["rental_requests"] = Rental.objects.filter(equipment=equipment)
         return context
+
+def my_rentals(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    rentals = Rental.objects.filter(user=request.user, active=True)
+    context = {"rentals": rentals}
+    return render(request, "products/my_rentals.html", context)
+
+
+def return_rental(request, rental_id):
+
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+
+    rental = get_object_or_404(Rental, id=rental_id, user=request.user, active=True)
+
+    if request.method == "POST":
+        rental.active = False
+        rental.return_date = timezone.now()
+        rental.save()
+
+        equipment = rental.equipment
+        equipment.status = "available"
+        equipment.save()
+
+        messages.success(request, "Equipment returned successfully.")
+        return redirect("products:my_rentals")
+
+    return redirect("products:my_rentals")

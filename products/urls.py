@@ -28,10 +28,8 @@ urlpatterns = [
         name="product_requests",
     ),
     path("<int:pk>/edit/", views.EquipmentUpdateView.as_view(), name="edit_equipment"),
-    path(
-        "<int:pk>/delete/",
-        views.ProductDetailView.delete_product,
-        name="delete_product",
-    ),
+    path("<int:pk>/delete/", views.ProductDetailView.delete_product, name="delete_product"),
     # products/{productID}
+    path("my_rentals/", views.my_rentals, name="my_rentals"),
+    path("return/<int:rental_id>/", views.return_rental, name="return_rental"),
 ]
