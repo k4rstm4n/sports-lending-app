@@ -27,8 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-p7^a!x59wk*inww^e=qt6yfs!oo$jiwo!5_8pwh(7@ra2+3)0r"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -136,6 +135,7 @@ WSGI_APPLICATION = "a17cla.wsgi.application"
 # }
 
 if os.getenv("DATABASE_URL"):
+    DEBUG = False
     DATABASES = {
         "default": dj_database_url.config(
             conn_max_age=600,
@@ -144,6 +144,8 @@ if os.getenv("DATABASE_URL"):
         ),
     }
 else:
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
