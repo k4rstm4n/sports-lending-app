@@ -1,0 +1,12 @@
+Thank you for using A-17's CLA project!
+
+Your equipment rental request has been approved!
+
+If you have any questions, feel free to reach out to the equipment owner.
+
+Contact Information:
+{{ owner.name }}
+{{ owner_email }}
+
+From,
+The A-17 Team
