@@ -15,11 +15,11 @@ def add_to_borrowers_group(request, user, **kwargs):
 def create_profile(request, user, **kwargs):
     social_account = SocialAccount.objects.filter(provider="google", user=user).first()
     profile = Profile.objects.create(user=user)
-    if social_account.extra_data["given_name"]:
+    if "given_name" in social_account.extra_data:
         profile.fname = social_account.extra_data["given_name"]
-    if social_account.extra_data["family_name"]:
+    if "family_name" in social_account.extra_data:
         profile.lname = social_account.extra_data["family_name"]
-    if social_account.extra_data["email"]:
+    if "email" in social_account:
         profile.email = social_account.extra_data["email"]
     profile.save()
 
