@@ -175,6 +175,8 @@ class EquipmentCreateView(CreateView):
 
 from allauth.account.models import EmailAddress
 from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 def rent_equipment(request, borrow_request_id):
     """Handles borrow request approval"""
@@ -182,6 +184,13 @@ def rent_equipment(request, borrow_request_id):
         return redirect("login")
     borrow_request = get_object_or_404(Borrow_Request, id=borrow_request_id)
     equipment = borrow_request.equipment
+    owner = equipment.owner
+    print(owner)
+    try:
+        owner_email = EmailAddress.objects.get(user=owner).email
+    except EmailAddress.DoesNotExist:
+        owner_email = "a17cla3240@gmail.com"
+    print(owner_email)
     borrower = borrow_request.user
     borrower_email = EmailAddress.objects.get(user=borrower).email
 
@@ -201,13 +210,21 @@ def rent_equipment(request, borrow_request_id):
 
 
     #! SEND MAIL HERE 
-    send_mail(
+    context = {
+        "owner": owner,
+        "owner_email": owner_email
+    }
+
+    text_context = render_to_string("emails/email.txt", context)
+
+    msg = EmailMultiAlternatives(
         "A-17 Renting Request Approval",
-        "Thank you for using A-17! You're request has been approved!",
+        text_context,
         "a17cla3240@gmail.com",
         [borrower_email],
-        fail_silently=False,
     )
+
+    msg.send()
     print("successfully sent mail")
     return redirect(reverse("products:manage_requests"))
 
