@@ -15,7 +15,7 @@ from django.contrib import messages
 
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
-    queryset = Equipment.objects.filter(status="available")
+    queryset = Equipment.objects.all()
 
     if form.is_valid():
         if form.cleaned_data["search"]:
@@ -32,6 +32,10 @@ def product_catalog(request):
 
         if form.cleaned_data["condition"]:
             queryset = queryset.filter(condition=form.cleaned_data["condition"])
+        
+
+        if form.cleaned_data["status"]:
+            queryset = queryset.filter(status=form.cleaned_data["status"])
 
         if form.cleaned_data["min_price"]:
             queryset = queryset.filter(
