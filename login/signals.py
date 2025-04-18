@@ -19,7 +19,7 @@ def create_profile(request, user, **kwargs):
         profile.fname = social_account.extra_data["given_name"]
     if "family_name" in social_account.extra_data:
         profile.lname = social_account.extra_data["family_name"]
-    if "email" in social_account:
+    if "email" in social_account.extra_data:
         profile.email = social_account.extra_data["email"]
     profile.save()
 
