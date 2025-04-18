@@ -5,7 +5,7 @@ Your equipment rental request has been approved!
 If you have any questions, feel free to reach out to the equipment owner.
 
 Contact Information:
-{{ owner.name }}
+{{ owner }}
 {{ owner_email }}
 
 From,
