@@ -135,7 +135,7 @@ WSGI_APPLICATION = "a17cla.wsgi.application"
 # }
 
 if os.getenv("DATABASE_URL"):
-    DEBUG = True
+    DEBUG = False
     DATABASES = {
         "default": dj_database_url.config(
             conn_max_age=600,
