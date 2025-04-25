@@ -10,6 +10,6 @@
         <button type="submit" class="btn btn-primary">Submit Review</button>
     </form>
 
-    <a href="{% url 'products:product_detail' equipment.pk %}" class="btn btn-secondary mt-3">Back to Product</a>
+    <a href="{% url 'products:product_detail' pk=equipment.pk %}" class="btn btn-secondary mt-3">Back to Product</a>
 </div>
 {% endblock %}
