@@ -177,6 +177,13 @@ class EquipmentUpdateView(LoginRequiredMixin, UpdateView):
     login_url = "/login/"
     redirect_field_name = "next"
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+
+        for field in form:
+            field.field.widget.attrs['class'] = field.field.widget.attrs.get('class', '') + ' form-control'
+        return form
+
     def get_success_url(self):
         # After successful update, redirect to product detail page
         return reverse_lazy("products:product_detail", kwargs={"pk": self.object.pk})
@@ -196,6 +203,14 @@ class EquipmentCreateView(LoginRequiredMixin, CreateView):
     # redirect if not logged in
     login_url = "/login/"
     redirect_field_name = "next"
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+
+        for field in form:
+            field.field.widget.attrs['class'] = field.field.widget.attrs.get('class', '') + ' form-control'
+        return form
+
+
 
     def form_valid(self, form):
         self.object = form.save(commit=False)

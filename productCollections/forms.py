@@ -17,6 +17,12 @@ class EditCollectionForm(forms.ModelForm):
             "collection_privacy",
             "collection_private_userlist",
         ]
+        widgets = {
+            'collection_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'collection_description': forms.Textarea(attrs={'class': 'form-control'}),
+            'collection_privacy': forms.Select(attrs={'class': 'form-select'}),
+            'collection_private_userlist': forms.SelectMultiple(attrs={'class': 'form-control'}), 
+        }
 
         search = forms.CharField(
             required=False,

@@ -101,6 +101,7 @@ def edit_collection(request, collection_id):
 
         if "update_collection" in request.POST:
             form = EditCollectionForm(request.POST, instance=collection)
+            
             if form.is_valid():
                 form.save()
                 messages.success(request, "Collection updated successfully.")
