@@ -227,16 +227,19 @@ class MakeCollectionsCreateView(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
+
         user = self.request.user
+
+        for field in form:
+            field.field.widget.attrs['class'] = field.field.widget.attrs.get('class', '') + ' form-control'
+
 
         if user.has_perm("login.borrower_perms"):
             form.fields.pop("collection_privacy")
             form.fields.pop("collection_private_userlist")
-
         elif user.has_perm("login.lender_perms"):
-            form.fields["collection_privacy"].choices = (
-                Collection.LENDER_PRIVACY_CHOICES
-            )
+            form.fields["collection_privacy"].choices = Collection.LENDER_PRIVACY_CHOICES
+
 
         return form
 
@@ -246,10 +249,13 @@ class MakeCollectionsCreateView(LoginRequiredMixin, CreateView):
         self.object.owner = self.request.user
 
         self.object.created_at = timezone.now()
-
         self.object.save()
+
+        if self.object.collection_privacy == 'public':
+            self.object.collection_private_userlist.clear()
         if self.request.user.has_perm("login.lender_perms"):
-            form.save_m2m()
+            if self.object.collection_privacy != 'public':
+                form.save_m2m()
 
         return redirect(reverse("productCollections:make_collections"))
 
