@@ -28,7 +28,7 @@
 
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for collections in collection_list %}
+        {% for collections, requested in collection_list %}
         <div class="col">
             <div class="card h-100">
                 <div class="card-body">
@@ -46,23 +46,24 @@
                         </li>
                     </ul>
                     {% if collections.collection_privacy == "private" %}
-                    {% if perms.login.borrower_perms %}
-                    {% if user not in collections.collection_private_userlist.all %}
-
-                    <form method="post" action="{% url 'productCollections:manage_collection_requests' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="collection_id" value="{{ collections.id }}">
-                        <button type="submit" class="btn btn-warning">Request access</button>
-                    </form>
-                    {% endif %}
-                    {% if user in collections.collection_private_userlist.all %}
-                    <a href="{% url 'productCollections:view_collection' collections.id %}" class="btn btn-primary">View
-                        Collection</a>
-                    {% endif %}
-                    {% endif %}
-                    {% if perms.login.lender_perms %}
-                    <a href="{% url 'productCollections:view_collection' collections.id %}" class="btn btn-primary">View
-                        Collection</a>
+                        {% if perms.login.borrower_perms %}
+                            {% if user not in collections.collection_private_userlist.all %}
+                                {% if requested %}
+                                    <p>Request Pending</p>
+                                {% else %}
+                                    <form method="post" action="{% url 'productCollections:manage_collection_requests' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="collection_id" value="{{ collections.id }}">
+                                        <button type="submit" class="btn btn-warning">Request access</button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                            {% if user in collections.collection_private_userlist.all %}
+                                <a href="{% url 'productCollections:view_collection' collections.id %}" class="btn btn-primary">View Collection</a>
+                            {% endif %}
+                        {% endif %}
+                        {% if perms.login.lender_perms %}
+                            <a href="{% url 'productCollections:view_collection' collections.id %}" class="btn btn-primary">View Collection</a>
                         {% endif %}
                     {% else %}
                     <a href="{% url 'productCollections:view_collection' collections.id %}" class="btn btn-primary">View
