@@ -33,6 +33,7 @@
 
                     <h3 class="mt-4">Reviews</h3>
                     {% if reviews %}
+
                     {% for review in reviews %}
                     <div class="card my-3 p-3 border-0 shadow-sm">
                         <h5 class="fw-bold">{{ review.user.username }}</h5>
@@ -40,7 +41,7 @@
                         <p>{{ review.text }}</p>
 
                         {% if review.user == request.user %}
-                        <a href="{% url 'products:product_review_update' equipment.id %}"
+                        <a href="{% url 'products:product_review_update' equipment_pk=equipment.pk review_pk=review.pk %}"
                             class="btn btn-outline-secondary">
                             <i class=""></i> Edit
                         </a>
@@ -48,6 +49,7 @@
 
                     </div>
                     {% endfor %}
+
                     {% else %}
                     <p class="text-muted">No reviews yet. Be the first to review this product!</p>
                     {% endif %}

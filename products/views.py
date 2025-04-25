@@ -18,7 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
     private_collections = Collection.objects.filter(collection_privacy="private")
-    queryset = Equipment.objects.filter(status="available").exclude(
+    queryset = Equipment.objects.all().exclude(
         collections__in=private_collections
     )
 
@@ -37,6 +37,10 @@ def product_catalog(request):
 
         if form.cleaned_data["condition"]:
             queryset = queryset.filter(condition=form.cleaned_data["condition"])
+        
+
+        if form.cleaned_data["status"]:
+            queryset = queryset.filter(status=form.cleaned_data["status"])
 
         if form.cleaned_data["min_price"]:
             queryset = queryset.filter(
@@ -114,6 +118,7 @@ class ReviewCreate(LoginRequiredMixin, CreateView):
         data["equipment"] = Equipment.objects.get(
             pk=self.kwargs["pk"]
         )  # Pass equipment to template
+        
         return data
 
     def form_valid(self, form):
@@ -122,6 +127,34 @@ class ReviewCreate(LoginRequiredMixin, CreateView):
         self.object.equipment = Equipment.objects.get(
             pk=self.kwargs["pk"]
         )  # Assign equipment
+
+        self.object.created_at = timezone.now()
+        self.object.save()
+        return super().form_valid(form)
+
+class ReviewUpdate(UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = "products/review_form.html"
+    success_url = reverse_lazy("products:product_catalog")
+
+    # def get_queryset(self):
+    #     return Review.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        # data["equipment"] = Equipment.objects.get(
+        #     pk=self.kwargs["pk"]
+        # )  # Pass equipment to template
+        data["equipment"] = self.object.equipment
+        return data
+
+    def get_object(self, queryset=None):
+        # retrieve URL based on primary key and check if review belongs to user
+        return get_object_or_404(Review, pk=self.kwargs["review_pk"], user=self.request.user)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
         self.object.created_at = timezone.now()
         self.object.save()
         return super().form_valid(form)
@@ -147,31 +180,6 @@ class EquipmentUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         # After successful update, redirect to product detail page
         return reverse_lazy("products:product_detail", kwargs={"pk": self.object.pk})
-
-
-class ReviewUpdate(UpdateView):
-    model = Review
-    form_class = ReviewForm
-    template_name = "products/review_form.html"
-    success_url = reverse_lazy("products:product_catalog")
-
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
-        data["equipment"] = Equipment.objects.get(
-            pk=self.kwargs["pk"]
-        )  # Pass equipment to template
-        return data
-
-    def get_object(self, queryset=None):
-        # retrieve URL based on primary key and check if review belongs to user
-        return get_object_or_404(Review, pk=self.kwargs["pk"], user=self.request.user)
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.created_at = timezone.now()
-        self.object.save()
-        return super().form_valid(form)
-
 
 class EquipmentCreateView(LoginRequiredMixin, CreateView):
     model = Equipment
