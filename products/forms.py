@@ -19,6 +19,12 @@ class EquipmentFilterForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
+    status = forms.ChoiceField(
+        choices=[('', 'All Statuses')] + Equipment.STATUS_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
     min_price = forms.DecimalField(
         required=False,
         widget=forms.NumberInput(attrs={
