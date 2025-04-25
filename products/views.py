@@ -17,7 +17,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
-    queryset = Equipment.objects.all()
+    private_collections = Collection.objects.filter(collection_privacy="private")
+    queryset = Equipment.objects.all().exclude(
+        collections__in=private_collections
+    )
 
     if form.is_valid():
         if form.cleaned_data["search"]:
