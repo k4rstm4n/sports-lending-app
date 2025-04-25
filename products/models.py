@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from productCollections.models import Collection
 from datetime import timedelta
 from django.db.models import UniqueConstraint
+from django.db.models import Avg
 
 import uuid
 
@@ -49,6 +50,10 @@ class Equipment(models.Model):
     collections = models.ManyToManyField(
         Collection, related_name="equipment", blank=True
     )
+    @property
+    def average_rating(self) -> float:
+        agg = self.reviews.aggregate(avg=Avg("rating")) 
+        return float(agg["avg"] or 0)
 
     def __str__(self):
         return self.name

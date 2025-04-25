@@ -16,6 +16,16 @@
                     <p class="card-text mt-3">{{ equipment.description }}</p>
 
                     <ul class="list-group list-group-flush">
+                        <span class="star-rating text-warning d-inline-block">
+                        {% with filled=equipment.average_rating|floatformat:"0"|add:"0" %}
+                            {% for _ in "12345"|make_list %}
+                            <i class="bi {% if forloop.counter <= filled %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                            {% endfor %}
+                        {% endwith %}
+                        </span>
+                        <p class="small text-muted">{{ equipment.average_rating|floatformat:1 }} out of 5</p>
+
+
                         <li class="list-group-item"><strong>Category:</strong>
                             <span class="badge bg-info text-dark">{{ equipment.get_category_display }}</span>
                         </li>
@@ -36,9 +46,29 @@
 
                     {% for review in reviews %}
                     <div class="card my-3 p-3 border-0 shadow-sm">
-                        <h5 class="fw-bold">{{ review.user.username }}</h5>
-                        <p class="text-muted">{{ review.created_at }}</p>
+                        <div>
+                            <h5 
+                                class="fw-bold d-inline-block">{{ review.user.username }}
+                            </h5>
+
+                            <span class="star-rating text-warning d-inline-block">
+                                {% for _ in "12345"|make_list %}
+                                    <i
+                                    class="bi
+                                        {% if review.rating >= forloop.counter %}
+                                        bi-star-fill
+                                        {% else %}
+                                        bi-star
+                                        {% endif %}"
+                                    ></i>
+                                {% endfor %}
+                            </span>
+                        </div>
+                        <p class="text-muted">Reviewed on {{ review.created_at }}</p>
                         <p>{{ review.text }}</p>
+
+
+                        
 
                         {% if review.user == request.user %}
                         <a href="{% url 'products:product_review_update' equipment_pk=equipment.pk review_pk=review.pk %}"
