@@ -18,7 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 def product_catalog(request):
     form = EquipmentFilterForm(request.GET)
     private_collections = Collection.objects.filter(collection_privacy="private")
-    queryset = Equipment.objects.filter(status="available").exclude(
+    queryset = Equipment.objects.all().exclude(
         collections__in=private_collections
     )
 
@@ -37,6 +37,10 @@ def product_catalog(request):
 
         if form.cleaned_data["condition"]:
             queryset = queryset.filter(condition=form.cleaned_data["condition"])
+        
+
+        if form.cleaned_data["status"]:
+            queryset = queryset.filter(status=form.cleaned_data["status"])
 
         if form.cleaned_data["min_price"]:
             queryset = queryset.filter(
