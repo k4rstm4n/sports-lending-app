@@ -15,10 +15,15 @@ urlpatterns = [
     # products/1/details/
     path("<int:pk>/details/", views.ProductDetailView.as_view(), name="product_detail"),
     path("<int:pk>/reviews/", views.ReviewCreate.as_view(), name="product_review"),
+    # path(
+    #     "<int:pk>/reviews/edit/",
+    #     views.ReviewUpdate.as_view(),
+    #     name="product_review_update",
+    # ),
     path(
-        "<int:pk>/reviews/edit/",
+        '<int:equipment_pk>/reviews/<int:review_pk>/edit/',
         views.ReviewUpdate.as_view(),
-        name="product_review_update",
+        name='product_review_update'
     ),
     path("<int:borrow_request_id>/rent/", views.rent_equipment, name="product_rent"),
     path("<int:borrow_request_id>/deny/", views.deny_equipment, name="product_deny"),
