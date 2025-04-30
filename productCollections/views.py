@@ -206,11 +206,18 @@ def collection_catalog(request):
             queryset = queryset.filter(
                 collection_privacy=form.cleaned_data["collection_privacy"]
             )
-        collection_list = [(collection, Collection_Request.objects.filter(user=user, collection=collection)) for collection in queryset]
-        context = {
-            "form": form,
-            "collection_list": collection_list
-        }
+
+        if user.is_authenticated:
+            collection_list = [
+                (collection, Collection_Request.objects.filter(user=user, collection=collection))
+                for collection in queryset
+            ]
+        else:
+            collection_list = [(collection, None) for collection in queryset]
+            context = {
+                "form": form,
+                "collection_list": collection_list
+            }
         return render(request, "productCollections/view_collections.html", context)
 
 
