@@ -212,6 +212,10 @@ def collection_catalog(request):
                 (collection, Collection_Request.objects.filter(user=user, collection=collection))
                 for collection in queryset
             ]
+            context = {
+                "form": form,
+                "collection_list": collection_list
+            }
         else:
             collection_list = [(collection, None) for collection in queryset]
             context = {
