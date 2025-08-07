@@ -1,1 +1,5 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/hLqvXyMi)
+This is a web app for cataloging and lending sports equipment developed with a team of UVA students.
+
+It uses the Django framework and was formerly deployed with Heroku.
+
+I contributed to the project as a full-stack developer and also handled all DevOps tasks, including Heroku deployment, S3 media storage, GitHub Actions, and Google Sign-In integration.
